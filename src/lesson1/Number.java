@@ -6,10 +6,10 @@ package lesson1;
  * Date: 02.03.12
  * Time: 1:12
  */
-public class Number extends Token {
-    
+class Number extends Token {
+
     Number(String expression, int start, int end) {
         super(Token.TYPE_NUMBER, expression, start, end);
     }
-    
+
 }

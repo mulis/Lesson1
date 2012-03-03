@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
  * Date: 29.02.12
  * Time: 22:29
  */
-public class Tokenizer {
+class Tokenizer {
 
-    String expression;
-    int expressionPosition;
+    private final String expression;
+    private int expressionPosition;
 
-    //Matcher digitsMatcher = Pattern.compile("\\G\\d+").matcher("");
-    Matcher digitsMatcher = Pattern.compile("\\G\\d*\\.?\\d+").matcher("");
-    Matcher operatorsMatcher = Pattern.compile("\\G[\\+?\\-?]").matcher("");
-    Matcher parenthesesMatcher = Pattern.compile("\\G[\\(?\\)?]").matcher("");
+    private final Matcher digitsMatcher = Pattern.compile("\\G\\d+").matcher("");
+    //private final Matcher digitsMatcher = Pattern.compile("\\G\\d*\\.?\\d+").matcher("");
+    private final Matcher operatorsMatcher = Pattern.compile("\\G[\\+?\\-?]").matcher("");
+    private final Matcher parenthesesMatcher = Pattern.compile("\\G[\\(?\\)?]").matcher("");
 
     Tokenizer(String expression) {
         this.expression = expression;
@@ -51,9 +51,9 @@ public class Tokenizer {
         return new Token(Token.TYPE_UNKNOWN, expression, expressionPosition, expression.length());
 
     }
-    
+
     Boolean hasNext() {
-        return (expressionPosition < expression.length()) ? true : false;
+        return (expressionPosition < expression.length());
     }
 
     void skipSpaces() {

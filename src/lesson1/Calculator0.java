@@ -6,7 +6,7 @@ package lesson1;
  * Date: 28.02.12
  * Time: 21:27
  */
-public class Calculator0 {
+class Calculator0 {
 
     char spaceChar = " ".charAt(0);
     char zeroChar = "0".charAt(0);
@@ -21,7 +21,7 @@ public class Calculator0 {
 
     public Integer calculate(String expressionInput) {
 
-        Integer result = null;
+        Integer result;
         expression = expressionInput;
 
         String firstOperand = scanOperand();

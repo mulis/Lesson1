@@ -6,7 +6,7 @@ package lesson1;
  * Date: 02.03.12
  * Time: 1:16
  */
-public class Operator extends Token {
+class Operator extends Token {
 
     // precedence   operators       associativity
     // 4            !               right to left
@@ -17,9 +17,9 @@ public class Operator extends Token {
     public static final boolean LEFT_TO_RIGHT = true;
     public static final boolean RIGHT_TO_LEFT = false;
 
-    int precedence;
-    boolean association;
-    int argumentCount;
+    final int precedence;
+    final boolean association;
+    final int argumentCount;
 
     Operator(String expression, int start, int end) {
         super(Token.TYPE_OPERATOR, expression, start, end);

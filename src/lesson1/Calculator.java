@@ -8,19 +8,17 @@ import java.util.ArrayList;
  * Date: 29.02.12
  * Time: 22:05
  */
-public class Calculator {
+class Calculator {
 
     String calculate(String expression) throws CommonException {
 
-        String result = "";
-
-        ArrayList tokens = makeTokens(expression);
+        ArrayList<Token> tokens = makeTokens(expression);
 
         int index = 0;
 
         while (tokens.size() > 1) {
 
-            Token token = (Token) tokens.get(index);
+            Token token = tokens.get(index);
 
             String operationBefore = token.expression.substring(0, token.start);
             String operationAfter = token.expression.substring(token.end);
@@ -30,7 +28,7 @@ public class Calculator {
                 Number[] operands = new Number[operator.argumentCount];
                 index -= operator.argumentCount;
                 for (int i = 0; i < operator.argumentCount; i++) {
-                    Token operand = (Token) tokens.get(index);
+                    Token operand = tokens.get(index);
                     if (operand.type == Token.TYPE_NUMBER) {
                         operands[i] = (Number) operand;
                         // remove parentheses from operand
@@ -72,18 +70,16 @@ public class Calculator {
 
         }
 
-        result = ((Token) tokens.get(0)).text;
-
-        return result;
+        return tokens.get(0).text;
 
     }
 
-    ArrayList makeTokens(String expression) throws CommonException {
+    ArrayList<Token> makeTokens(String expression) throws CommonException {
 
         // making tokens in RPN
         Tokenizer tokenizer = new Tokenizer(expression);
-        ArrayList tokens = new ArrayList();
-        ArrayList stack = new ArrayList();
+        ArrayList<Token> tokens = new ArrayList<Token>();
+        ArrayList<Token> tokensStack = new ArrayList<Token>();
 
         while (tokenizer.hasNext()) {
 
@@ -105,9 +101,9 @@ public class Calculator {
             // If the token is an operator, op1, then:
             if (token.type == Token.TYPE_OPERATOR) {
 
-                while (stack.size() > 0) {
+                while (tokensStack.size() > 0) {
 
-                    Token tokenStack = (Token) stack.get(stack.size() - 1);
+                    Token tokenStack = tokensStack.get(tokensStack.size() - 1);
 
                     // While there is an operator token, o2, at the top of the stack
                     // op1 is left-associative and its precedence is less than or equal to that of op2,
@@ -118,7 +114,7 @@ public class Calculator {
                         if (((operator1.association == Operator.LEFT_TO_RIGHT) && (operator1.precedence <= operator2.precedence))
                                 || ((operator1.association == Operator.RIGHT_TO_LEFT) && (operator1.precedence < operator2.precedence))) {
                             // Pop o2 off the stack, onto the output queue;
-                            stack.remove(tokenStack);
+                            tokensStack.remove(tokenStack);
                             tokens.add(tokenStack);
                         }
                     } else {
@@ -128,7 +124,7 @@ public class Calculator {
                 }
 
                 // push op1 onto the stack.
-                stack.add(token);
+                tokensStack.add(token);
                 continue;
 
             }
@@ -137,7 +133,7 @@ public class Calculator {
 
                 // If the token is a left parenthesis, then push it onto the stack.
                 if (token.text.charAt(0) == Token.PARENTHESISLEFT) {
-                    stack.add(token);
+                    tokensStack.add(token);
                     continue;
                 }
 
@@ -148,15 +144,15 @@ public class Calculator {
 
                     // Until the token at the top of the stack is a left parenthesis,
                     // pop operators off the stack onto the output queue
-                    while (stack.size() > 0) {
+                    while (tokensStack.size() > 0) {
 
-                        Token tokenStack = (Token) stack.get(stack.size() - 1);
+                        Token tokenStack = tokensStack.get(tokensStack.size() - 1);
 
                         if (tokenStack.text.charAt(0) == Token.PARENTHESISLEFT) {
                             parenthesesMatch = true;
                             break;
                         } else {
-                            stack.remove(tokenStack);
+                            tokensStack.remove(tokenStack);
                             tokens.add(tokenStack);
                         }
 
@@ -168,7 +164,7 @@ public class Calculator {
                     }
 
                     // Pop the left parenthesis from the stack, but not onto the output queue.
-                    stack.remove(stack.size() - 1);
+                    tokensStack.remove(tokensStack.size() - 1);
 
                     // If the token at the top of the stack is a function token, pop it onto the output queue.
                     // TODO
@@ -187,15 +183,15 @@ public class Calculator {
 
         // When there are no more tokens to read:
         // While there are still operator tokens in the stack:
-        while (stack.size() > 0) {
+        while (tokensStack.size() > 0) {
 
-            Token tokenStack = (Token) stack.get(stack.size() - 1);
+            Token tokenStack = tokensStack.get(tokensStack.size() - 1);
 
             if (tokenStack.type == Token.TYPE_PARENTHESIS) {
                 throw (new ParenthesesNotMatchException(tokenStack));
             }
 
-            stack.remove(tokenStack);
+            tokensStack.remove(tokenStack);
             tokens.add(tokenStack);
 
         }
@@ -205,8 +201,9 @@ public class Calculator {
     }
 
     class CommonException extends Exception {
-        Token token;
-        String message;
+
+        final Token token;
+        final String message;
 
         CommonException(String message, Token token) {
             super();
@@ -220,6 +217,7 @@ public class Calculator {
             String expression = "\texpression: " + token.expression.substring(0, token.start) + " -->" + token.expression.substring(token.start, token.end) + "<-- " + token.expression.substring(token.end);
             return message + "\n" + position + expression;
         }
+
     }
 
     class ParenthesesNotMatchException extends CommonException {
