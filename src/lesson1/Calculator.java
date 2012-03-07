@@ -27,6 +27,9 @@ class Calculator {
                 Operator operator = (Operator) token;
                 Number[] operands = new Number[operator.argumentCount];
                 index -= operator.argumentCount;
+                if (index < 0) {
+                    throw (new AbsentOperandException(operator));
+                }
                 for (int i = 0; i < operator.argumentCount; i++) {
                     Token operand = tokens.get(index);
                     if (operand.type == Token.TYPE_NUMBER) {
@@ -47,6 +50,8 @@ class Calculator {
                             operationAfter = operand.expression.substring(operand.end);
                         }
                         tokens.remove(operand);
+                    } else {
+                        throw (new AbsentOperandException(operator));
                     }
                 }
 
@@ -67,6 +72,10 @@ class Calculator {
             }
 
             index++;
+
+            if ((index == tokens.size()) && (tokens.size() > 1)) {
+                throw (new AbsentOperatorException(tokens.get(index - 1)));
+            }
 
         }
 
@@ -214,7 +223,7 @@ class Calculator {
         @Override
         public String toString() {
             String position = "\tposition: " + token.start + "\n";
-            String expression = "\texpression: " + token.expression.substring(0, token.start) + " -->" + token.expression.substring(token.start, token.end) + "<-- " + token.expression.substring(token.end);
+            String expression = "\texpression: " + token.expression.substring(0, token.start) + ">>-->" + token.expression.substring(token.start, token.end) + "<--<<" + token.expression.substring(token.end);
             return message + "\n" + position + expression;
         }
 
@@ -229,6 +238,18 @@ class Calculator {
     class UnknownTokenException extends CommonException {
         UnknownTokenException(Token token) {
             super("Unknown token.", token);
+        }
+    }
+
+    class AbsentOperandException extends CommonException {
+        AbsentOperandException(Token token) {
+            super("Absent operand.", token);
+        }
+    }
+
+    class AbsentOperatorException extends CommonException {
+        AbsentOperatorException(Token token) {
+            super("Absent operator.", token);
         }
     }
 
