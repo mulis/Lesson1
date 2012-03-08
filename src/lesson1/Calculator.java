@@ -20,54 +20,54 @@ class Calculator {
 
             Token token = tokens.get(index);
 
-            String operationBefore = token.expression.substring(0, token.start);
-            String operationAfter = token.expression.substring(token.end);
-
             if (token.type == Token.TYPE_OPERATOR) {
+
                 Operator operator = (Operator) token;
                 Number[] operands = new Number[operator.argumentCount];
+                int start = operator.start;
+                int end = operator.end;
+
                 index -= operator.argumentCount;
                 if (index < 0) {
                     throw (new AbsentOperandException(operator));
                 }
+
                 for (int i = 0; i < operator.argumentCount; i++) {
+
                     Token operand = tokens.get(index);
+
                     if (operand.type == Token.TYPE_NUMBER) {
+
                         operands[i] = (Number) operand;
-                        // remove parentheses from operand
-                        while ((operand.start > 0) && (operand.expression.charAt(operand.start - 1) == Token.PARENTHESISLEFT)
-                                && (operand.end < operand.expression.length()) && (operand.expression.charAt(operand.end) == Token.PARENTHESISRIGHT)) {
-                            operand.expression = operand.expression.substring(0, operand.start - 1) + operand.text + operand.expression.substring(operand.end + 1);
-                            operand.start--;
-                            operand.end--;
+
+                        if (start > operand.start) {
+                            start = operand.start;
                         }
-                        // update expression before operation tokens
-                        if (operationBefore.length() > operand.expression.substring(0, operand.start).length()) {
-                            operationBefore = operand.expression.substring(0, operand.start);
+
+                        if (end < operand.end) {
+                            end = operand.end;
                         }
-                        // update expression after operation tokens
-                        if (operationAfter.length() > operand.expression.substring(operand.end).length()) {
-                            operationAfter = operand.expression.substring(operand.end);
-                        }
+
                         tokens.remove(operand);
+
                     } else {
                         throw (new AbsentOperandException(operator));
                     }
+
                 }
 
                 String operationResult = "";
 
                 if (operator.text.charAt(0) == Token.PLUS) {
-                    operationResult = Integer.parseInt(operands[0].text) + Integer.parseInt(operands[1].text) + "";
+                    operationResult = Integer.parseInt(operands[0].value) + Integer.parseInt(operands[1].value) + "";
                 }
 
                 if (operator.text.charAt(0) == Token.MINUS) {
-                    operationResult = Integer.parseInt(operands[0].text) - Integer.parseInt(operands[1].text) + "";
+                    operationResult = Integer.parseInt(operands[0].value) - Integer.parseInt(operands[1].value) + "";
                 }
 
-                String expressionResult = operationBefore + operationResult + operationAfter;
-                tokens.add(index, new Number(expressionResult, operationBefore.length(), operationBefore.length() + operationResult.length()));
-                tokens.remove(token);
+                tokens.add(index, new Number(expression, start, end, operationResult));
+                tokens.remove(operator);
 
             }
 
@@ -79,7 +79,7 @@ class Calculator {
 
         }
 
-        return tokens.get(0).text;
+        return ((Number) tokens.get(0)).value;
 
     }
 
@@ -223,7 +223,7 @@ class Calculator {
         @Override
         public String toString() {
             String position = "\tposition: " + token.start + "\n";
-            String expression = "\texpression: " + token.expression.substring(0, token.start) + ">>-->" + token.expression.substring(token.start, token.end) + "<--<<" + token.expression.substring(token.end);
+            String expression = "\texpression: " + token.expression.substring(0, token.start) + ">>--> " + token.expression.substring(token.start, token.end) + " <--<<" + token.expression.substring(token.end);
             return message + "\n" + position + expression;
         }
 

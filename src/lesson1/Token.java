@@ -20,6 +20,7 @@ class Token {
     public static final char PARENTHESISLEFT = "(".charAt(0);
     public static final char PARENTHESISRIGHT = ")".charAt(0);
 
+
     final int type;
     String expression;
     int start;

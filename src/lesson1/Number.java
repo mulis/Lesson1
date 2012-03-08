@@ -8,8 +8,11 @@ package lesson1;
  */
 class Number extends Token {
 
-    Number(String expression, int start, int end) {
+    String value;
+
+    Number(String expression, int start, int end, String value) {
         super(Token.TYPE_NUMBER, expression, start, end);
+        this.value = value;
     }
 
 }

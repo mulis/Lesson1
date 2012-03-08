@@ -33,7 +33,7 @@ class Tokenizer {
         if (digitsMatcher.find(expressionPosition)) {
             expressionPosition = digitsMatcher.end();
             skipSpaces();
-            return new Number(expression, digitsMatcher.start(), digitsMatcher.end());
+            return new Number(expression, digitsMatcher.start(), digitsMatcher.end(), digitsMatcher.group());
         }
 
         if (operatorsMatcher.find(expressionPosition)) {
