@@ -1,4 +1,4 @@
-package lesson1.Calculator;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package lesson1.Calculator;
  * Date: 11.03.12
  * Time: 15:00
  */
-class AbsentOperatorException extends CalculationException {
+public class AbsentOperatorException extends CalculationException {
     AbsentOperatorException(Token token) {
         super("Absent operator.", token);
     }

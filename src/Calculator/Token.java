@@ -1,4 +1,4 @@
-package lesson1.Calculator;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,7 +17,6 @@ public class Token {
     public static final int TYPE_PARENTHESIS = 3;
     public static final char PARENTHESISLEFT = '(';
     public static final char PARENTHESISRIGHT = ')';
-
 
     final int type;
     final String expression;

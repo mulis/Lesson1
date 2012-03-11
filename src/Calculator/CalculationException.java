@@ -1,4 +1,4 @@
-package lesson1.Calculator;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package lesson1.Calculator;
  * Date: 11.03.12
  * Time: 14:59
  */
-class CalculationException extends Exception {
+public class CalculationException extends Exception {
 
     final Token token;
     final String message;

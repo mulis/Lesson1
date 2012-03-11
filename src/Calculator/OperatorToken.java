@@ -1,4 +1,4 @@
-package lesson1.Calculator;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.

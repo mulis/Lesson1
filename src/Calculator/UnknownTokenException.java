@@ -1,4 +1,4 @@
-package lesson1.Calculator;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package lesson1.Calculator;
  * Date: 11.03.12
  * Time: 15:00
  */
-class UnknownTokenException extends CalculationException {
+public class UnknownTokenException extends CalculationException {
     UnknownTokenException(Token token) {
         super("Unknown token.", token);
     }
