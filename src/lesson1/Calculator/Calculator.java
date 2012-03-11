@@ -1,10 +1,5 @@
 package lesson1.Calculator;
 
-import lesson1.Tokenizer.NumberToken;
-import lesson1.Tokenizer.OperatorToken;
-import lesson1.Tokenizer.Token;
-import lesson1.Tokenizer.Tokenizer;
-
 import java.util.ArrayList;
 
 /**
@@ -15,7 +10,7 @@ import java.util.ArrayList;
  */
 public class Calculator {
 
-    public String calculate(String expression) throws CommonException {
+    public String calculate(String expression) throws CalculationException {
 
         ArrayList<Token> tokens = makeTokens(expression);
 
@@ -88,7 +83,7 @@ public class Calculator {
 
     }
 
-    ArrayList<Token> makeTokens(String expression) throws CommonException {
+    ArrayList<Token> makeTokens(String expression) throws CalculationException {
 
         // making tokens in RPN
         Tokenizer tokenizer = new Tokenizer(expression);
@@ -212,50 +207,6 @@ public class Calculator {
 
         return tokens;
 
-    }
-
-    class CommonException extends Exception {
-
-        final Token token;
-        final String message;
-
-        CommonException(String message, Token token) {
-            super();
-            this.message = message;
-            this.token = token;
-        }
-
-        @Override
-        public String toString() {
-            String position = "\tposition: " + token.getStart() + "\n";
-            String expression = "\texpression: " + token.getExpression().substring(0, token.getStart()) + ">>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<<" + token.getExpression().substring(token.getEnd());
-            return message + "\n" + position + expression;
-        }
-
-    }
-
-    class ParenthesesNotMatchException extends CommonException {
-        ParenthesesNotMatchException(Token token) {
-            super("Parentheses did not match.", token);
-        }
-    }
-
-    class UnknownTokenException extends CommonException {
-        UnknownTokenException(Token token) {
-            super("Unknown token.", token);
-        }
-    }
-
-    class AbsentOperandException extends CommonException {
-        AbsentOperandException(Token token) {
-            super("Absent operand.", token);
-        }
-    }
-
-    class AbsentOperatorException extends CommonException {
-        AbsentOperatorException(Token token) {
-            super("Absent operator.", token);
-        }
     }
 
 }

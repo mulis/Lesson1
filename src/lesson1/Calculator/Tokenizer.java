@@ -1,4 +1,4 @@
-package lesson1.Tokenizer;
+package lesson1.Calculator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
