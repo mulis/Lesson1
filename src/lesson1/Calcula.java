@@ -1,5 +1,7 @@
 package lesson1;
 
+import lesson1.Calculator.Calculator;
+
 import java.util.Scanner;
 
 /**
@@ -35,8 +37,7 @@ public class Calcula {
                         }
                         try {
                             System.out.println("= " + new Calculator().calculate(expression) + "\n");
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
                             System.out.println(ex + "\n");
                         }
                     }

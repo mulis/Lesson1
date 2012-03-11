@@ -1,4 +1,9 @@
-package lesson1;
+package lesson1.Calculator;
+
+import lesson1.Tokenizer.NumberToken;
+import lesson1.Tokenizer.OperatorToken;
+import lesson1.Tokenizer.Token;
+import lesson1.Tokenizer.Tokenizer;
 
 import java.util.ArrayList;
 
@@ -8,9 +13,9 @@ import java.util.ArrayList;
  * Date: 29.02.12
  * Time: 22:05
  */
-class Calculator {
+public class Calculator {
 
-    String calculate(String expression) throws CommonException {
+    public String calculate(String expression) throws CommonException {
 
         ArrayList<Token> tokens = makeTokens(expression);
 
@@ -20,32 +25,32 @@ class Calculator {
 
             Token token = tokens.get(index);
 
-            if (token.type == Token.TYPE_OPERATOR) {
+            if (token.getType() == Token.TYPE_OPERATOR) {
 
-                Operator operator = (Operator) token;
-                Number[] operands = new Number[operator.argumentCount];
-                int start = operator.start;
-                int end = operator.end;
+                OperatorToken operator = (OperatorToken) token;
+                NumberToken[] operands = new NumberToken[operator.getArgumentCount()];
+                int start = operator.getStart();
+                int end = operator.getEnd();
 
-                index -= operator.argumentCount;
+                index -= operator.getArgumentCount();
                 if (index < 0) {
                     throw (new AbsentOperandException(operator));
                 }
 
-                for (int i = 0; i < operator.argumentCount; i++) {
+                for (int i = 0; i < operator.getArgumentCount(); i++) {
 
                     Token operand = tokens.get(index);
 
-                    if (operand.type == Token.TYPE_NUMBER) {
+                    if (operand.getType() == Token.TYPE_NUMBER) {
 
-                        operands[i] = (Number) operand;
+                        operands[i] = (NumberToken) operand;
 
-                        if (start > operand.start) {
-                            start = operand.start;
+                        if (start > operand.getStart()) {
+                            start = operand.getStart();
                         }
 
-                        if (end < operand.end) {
-                            end = operand.end;
+                        if (end < operand.getEnd()) {
+                            end = operand.getEnd();
                         }
 
                         tokens.remove(operand);
@@ -58,15 +63,15 @@ class Calculator {
 
                 String operationResult = "";
 
-                if (operator.text.charAt(0) == Token.PLUS) {
-                    operationResult = Integer.parseInt(operands[0].value) + Integer.parseInt(operands[1].value) + "";
+                if (operator.getText().charAt(0) == OperatorToken.PLUS) {
+                    operationResult = Integer.parseInt(operands[0].getValue()) + Integer.parseInt(operands[1].getValue()) + "";
                 }
 
-                if (operator.text.charAt(0) == Token.MINUS) {
-                    operationResult = Integer.parseInt(operands[0].value) - Integer.parseInt(operands[1].value) + "";
+                if (operator.getText().charAt(0) == OperatorToken.MINUS) {
+                    operationResult = Integer.parseInt(operands[0].getValue()) - Integer.parseInt(operands[1].getValue()) + "";
                 }
 
-                tokens.add(index, new Number(expression, start, end, operationResult));
+                tokens.add(index, new NumberToken(expression, start, end, operationResult));
                 tokens.remove(operator);
 
             }
@@ -79,7 +84,7 @@ class Calculator {
 
         }
 
-        return ((Number) tokens.get(0)).value;
+        return ((NumberToken) tokens.get(0)).getValue();
 
     }
 
@@ -96,7 +101,7 @@ class Calculator {
             Token token = tokenizer.nextToken();
 
             // If the token is a number (identifier), then add it to the output queue.
-            if (token.type == Token.TYPE_NUMBER) {
+            if (token.getType() == Token.TYPE_NUMBER) {
                 tokens.add(token);
                 continue;
             }
@@ -108,7 +113,7 @@ class Calculator {
             // TODO
 
             // If the token is an operator, op1, then:
-            if (token.type == Token.TYPE_OPERATOR) {
+            if (token.getType() == Token.TYPE_OPERATOR) {
 
                 while (tokensStack.size() > 0) {
 
@@ -117,11 +122,11 @@ class Calculator {
                     // While there is an operator token, o2, at the top of the stack
                     // op1 is left-associative and its precedence is less than or equal to that of op2,
                     // or op1 is right-associative and its precedence is less than that of op2,
-                    if (tokenStack.type == Token.TYPE_OPERATOR) {
-                        Operator operator1 = (Operator) token;
-                        Operator operator2 = (Operator) tokenStack;
-                        if (((operator1.association == Operator.LEFT_TO_RIGHT) && (operator1.precedence <= operator2.precedence))
-                                || ((operator1.association == Operator.RIGHT_TO_LEFT) && (operator1.precedence < operator2.precedence))) {
+                    if (tokenStack.getType() == Token.TYPE_OPERATOR) {
+                        OperatorToken operator1 = (OperatorToken) token;
+                        OperatorToken operator2 = (OperatorToken) tokenStack;
+                        if (((operator1.getAssociation() == OperatorToken.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
+                                || ((operator1.getAssociation() == OperatorToken.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
                             // Pop o2 off the stack, onto the output queue;
                             tokensStack.remove(tokenStack);
                             tokens.add(tokenStack);
@@ -138,16 +143,16 @@ class Calculator {
 
             }
 
-            if (token.type == Token.TYPE_PARENTHESIS) {
+            if (token.getType() == Token.TYPE_PARENTHESIS) {
 
                 // If the token is a left parenthesis, then push it onto the stack.
-                if (token.text.charAt(0) == Token.PARENTHESISLEFT) {
+                if (token.getText().charAt(0) == Token.PARENTHESISLEFT) {
                     tokensStack.add(token);
                     continue;
                 }
 
                 // If the token is a right parenthesis:
-                if (token.text.charAt(0) == Token.PARENTHESISRIGHT) {
+                if (token.getText().charAt(0) == Token.PARENTHESISRIGHT) {
 
                     boolean parenthesesMatch = false;
 
@@ -157,7 +162,7 @@ class Calculator {
 
                         Token tokenStack = tokensStack.get(tokensStack.size() - 1);
 
-                        if (tokenStack.text.charAt(0) == Token.PARENTHESISLEFT) {
+                        if (tokenStack.getText().charAt(0) == Token.PARENTHESISLEFT) {
                             parenthesesMatch = true;
                             break;
                         } else {
@@ -184,7 +189,7 @@ class Calculator {
 
             }
 
-            if (token.type == Token.TYPE_UNKNOWN) {
+            if (token.getType() == Token.TYPE_UNKNOWN) {
                 throw (new UnknownTokenException(token));
             }
 
@@ -196,7 +201,7 @@ class Calculator {
 
             Token tokenStack = tokensStack.get(tokensStack.size() - 1);
 
-            if (tokenStack.type == Token.TYPE_PARENTHESIS) {
+            if (tokenStack.getType() == Token.TYPE_PARENTHESIS) {
                 throw (new ParenthesesNotMatchException(tokenStack));
             }
 
@@ -222,8 +227,8 @@ class Calculator {
 
         @Override
         public String toString() {
-            String position = "\tposition: " + token.start + "\n";
-            String expression = "\texpression: " + token.expression.substring(0, token.start) + ">>--> " + token.expression.substring(token.start, token.end) + " <--<<" + token.expression.substring(token.end);
+            String position = "\tposition: " + token.getStart() + "\n";
+            String expression = "\texpression: " + token.getExpression().substring(0, token.getStart()) + ">>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<<" + token.getExpression().substring(token.getEnd());
             return message + "\n" + position + expression;
         }
 

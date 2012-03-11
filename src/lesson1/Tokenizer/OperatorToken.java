@@ -1,4 +1,4 @@
-package lesson1;
+package lesson1.Tokenizer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,10 @@ package lesson1;
  * Date: 02.03.12
  * Time: 1:16
  */
-class Operator extends Token {
+public class OperatorToken extends Token {
+
+    public static final char PLUS = '+';
+    public static final char MINUS = '-';
 
     // precedence   operators       associativity
     // 4            !               right to left
@@ -21,16 +24,16 @@ class Operator extends Token {
     final boolean association;
     final int argumentCount;
 
-    Operator(String expression, int start, int end) {
-        super(Token.TYPE_OPERATOR, expression, start, end);
+    public OperatorToken(String expression, int start, int end) {
+        super(TYPE_OPERATOR, expression, start, end);
         this.precedence = getPrecedence();
         this.association = getAssociation();
         this.argumentCount = getArgumentCount();
     }
 
-    int getPrecedence() {
+    public int getPrecedence() {
 
-        if (text.charAt(0) == Token.PLUS && text.charAt(0) == Token.MINUS) {
+        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
             return 2;
         }
 
@@ -42,19 +45,19 @@ class Operator extends Token {
 
     }
 
-    boolean getAssociation() {
+    public boolean getAssociation() {
 
-        if (text.charAt(0) == Token.PLUS && text.charAt(0) == Token.MINUS) {
-            return Operator.LEFT_TO_RIGHT;
+        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
+            return LEFT_TO_RIGHT;
         }
 
-        return Operator.LEFT_TO_RIGHT;
+        return LEFT_TO_RIGHT;
 
     }
 
-    int getArgumentCount() {
+    public int getArgumentCount() {
 
-        if (text.charAt(0) == Token.PLUS && text.charAt(0) == Token.MINUS) {
+        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
             return 2;
         }
 

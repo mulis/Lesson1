@@ -1,4 +1,4 @@
-package lesson1;
+package lesson1.Tokenizer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * Date: 29.02.12
  * Time: 22:29
  */
-class Tokenizer {
+public class Tokenizer {
 
     private final String expression;
     private int expressionPosition;
@@ -19,7 +19,7 @@ class Tokenizer {
     private final Matcher operatorsMatcher = Pattern.compile("\\G[\\+?\\-?]").matcher("");
     private final Matcher parenthesesMatcher = Pattern.compile("\\G[\\(?\\)?]").matcher("");
 
-    Tokenizer(String expression) {
+    public Tokenizer(String expression) {
         this.expression = expression;
         expressionPosition = 0;
         digitsMatcher.reset(expression);
@@ -28,18 +28,18 @@ class Tokenizer {
         skipSpaces();
     }
 
-    Token nextToken() {
+    public Token nextToken() {
 
         if (digitsMatcher.find(expressionPosition)) {
             expressionPosition = digitsMatcher.end();
             skipSpaces();
-            return new Number(expression, digitsMatcher.start(), digitsMatcher.end(), digitsMatcher.group());
+            return new NumberToken(expression, digitsMatcher.start(), digitsMatcher.end(), digitsMatcher.group());
         }
 
         if (operatorsMatcher.find(expressionPosition)) {
             expressionPosition = operatorsMatcher.end();
             skipSpaces();
-            return new Operator(expression, operatorsMatcher.start(), operatorsMatcher.end());
+            return new OperatorToken(expression, operatorsMatcher.start(), operatorsMatcher.end());
         }
 
         if (parenthesesMatcher.find(expressionPosition)) {
@@ -52,7 +52,7 @@ class Tokenizer {
 
     }
 
-    Boolean hasNext() {
+    public Boolean hasNext() {
         return (expressionPosition < expression.length());
     }
 
