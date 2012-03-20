@@ -1,4 +1,4 @@
-package calculator2;
+package calculator;
 
 /**
  * Created by IntelliJ IDEA.

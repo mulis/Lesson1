@@ -1,6 +1,6 @@
 package calcula;
 
-import calculator2.Calculator;
+import calculator.Calculator;
 
 import java.util.Scanner;
 
