@@ -8,8 +8,8 @@ package calculator;
  */
 public class CalculationException extends Exception {
 
-    final Token token;
-    final String message;
+    final public Token token;
+    final public String message;
 
     CalculationException(String message, Token token) {
         super();
@@ -19,8 +19,8 @@ public class CalculationException extends Exception {
 
     @Override
     public String toString() {
-        String position = "\tposition: " + token.getStart() + "\n";
-        String expression = "\texpression: " + token.getExpression().substring(0, token.getStart()) + ">>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<<" + token.getExpression().substring(token.getEnd());
+        String position = "position: " + token.getStart() + "\n";
+        String expression = "expression: " + token.getExpression().substring(0, token.getStart()) + " >>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<< " + token.getExpression().substring(token.getEnd());
         return message + "\n" + position + expression;
     }
 
