@@ -1,4 +1,4 @@
-package calculator;
+package token;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,8 +11,6 @@ public class Token {
     public static final int TYPE_UNKNOWN = 0;
     public static final char SPACE = ' ';
     public static final int TYPE_NUMBER = 1;
-    //public static final char ZERO = "0".charAt(0);
-    //public static final char NINE = "9".charAt(0);
     public static final int TYPE_OPERATOR = 2;
     public static final int TYPE_PARENTHESIS = 3;
     public static final char PARENTHESISLEFT = '(';

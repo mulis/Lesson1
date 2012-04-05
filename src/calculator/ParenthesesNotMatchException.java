@@ -1,5 +1,7 @@
 package calculator;
 
+import token.Token;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Mulishov Serhij

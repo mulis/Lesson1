@@ -1,4 +1,4 @@
-package calculator;
+package token;
 
 /**
  * Created by IntelliJ IDEA.
@@ -62,6 +62,20 @@ public class OperatorToken extends Token {
         }
 
         return 2;
+
+    }
+
+    public String operate(NumberToken[] operands) {
+
+        if (text.charAt(0) == OperatorToken.PLUS) {
+            return Integer.parseInt(operands[0].getValue()) + Integer.parseInt(operands[1].getValue()) + "";
+        }
+
+        if (text.charAt(0) == OperatorToken.MINUS) {
+            return Integer.parseInt(operands[0].getValue()) - Integer.parseInt(operands[1].getValue()) + "";
+        }
+
+        return null;
 
     }
 

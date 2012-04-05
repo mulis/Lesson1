@@ -1,5 +1,9 @@
 package calculator;
 
+import token.NumberToken;
+import token.OperatorToken;
+import token.Token;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

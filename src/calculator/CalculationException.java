@@ -1,5 +1,7 @@
 package calculator;
 
+import token.Token;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Mulishov Serhij
@@ -20,7 +22,7 @@ public class CalculationException extends Exception {
     @Override
     public String toString() {
         String position = "\tposition: " + token.getStart() + "\n";
-        String expression = "\texpression: " + token.getExpression().substring(0, token.getStart()) + ">>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<<" + token.getExpression().substring(token.getEnd());
+        String expression = "\texpression: " + token.getExpression().substring(0, token.getStart()) + " >>--> " + token.getExpression().substring(token.getStart(), token.getEnd()) + " <--<< " + token.getExpression().substring(token.getEnd());
         return message + "\n" + position + expression;
     }
 

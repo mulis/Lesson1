@@ -1,4 +1,4 @@
-package calculator;
+package token;
 
 /**
  * Created by IntelliJ IDEA.
