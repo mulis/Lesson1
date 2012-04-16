@@ -4,6 +4,7 @@ import token.NumberToken;
 import token.OperatorToken;
 import token.Token;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +22,7 @@ public class Calculator {
         return this;
     }
 
-    public String calculate(String expression) throws CalculationException {
+    public BigDecimal calculate(String expression) throws CalculationException {
 
         ArrayList<Token> tokens = makeTokens(expression);
 
@@ -72,7 +73,7 @@ public class Calculator {
 
                 }
 
-                String operationResult = operator.operate(operands);
+                BigDecimal operationResult = operator.operate(operands);
 
                 tokens.add(index, new NumberToken(expression, start, end, operationResult));
                 tokens.remove(operator);
@@ -181,13 +182,13 @@ public class Calculator {
             if (token.getType() == Token.TYPE_PARENTHESIS) {
 
                 // If the token is a left parenthesis, then push it onto the stack.
-                if (token.getText().charAt(0) == Token.PARENTHESISLEFT) {
+                if (token.getText().charAt(0) == Token.PARENTHESIS_LEFT) {
                     tokenStack.add(token);
                     continue;
                 }
 
                 // If the token is a right parenthesis:
-                if (token.getText().charAt(0) == Token.PARENTHESISRIGHT) {
+                if (token.getText().charAt(0) == Token.PARENTHESIS_RIGHT) {
 
                     boolean parenthesesMatch = false;
 
@@ -197,7 +198,7 @@ public class Calculator {
 
                         Token tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
-                        if (tokenStackItem.getText().charAt(0) == Token.PARENTHESISLEFT) {
+                        if (tokenStackItem.getText().charAt(0) == Token.PARENTHESIS_LEFT) {
                             parenthesesMatch = true;
                             break;
                         } else {

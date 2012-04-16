@@ -9,12 +9,13 @@ package token;
 public class Token {
 
     public static final int TYPE_UNKNOWN = 0;
-    public static final char SPACE = ' ';
     public static final int TYPE_NUMBER = 1;
     public static final int TYPE_OPERATOR = 2;
     public static final int TYPE_PARENTHESIS = 3;
-    public static final char PARENTHESISLEFT = '(';
-    public static final char PARENTHESISRIGHT = ')';
+
+    public static final char SPACE = ' ';
+    public static final char PARENTHESIS_LEFT = '(';
+    public static final char PARENTHESIS_RIGHT = ')';
 
     final int type;
     final String expression;

@@ -1,5 +1,7 @@
 package token;
 
+import java.math.BigDecimal;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Mulishov Serhij
@@ -65,14 +67,14 @@ public class OperatorToken extends Token {
 
     }
 
-    public String operate(NumberToken[] operands) {
+    public BigDecimal operate(NumberToken[] operands) {
 
         if (text.charAt(0) == OperatorToken.PLUS) {
-            return Integer.parseInt(operands[0].getValue()) + Integer.parseInt(operands[1].getValue()) + "";
+            return operands[0].getValue().add(operands[1].getValue());
         }
 
         if (text.charAt(0) == OperatorToken.MINUS) {
-            return Integer.parseInt(operands[0].getValue()) - Integer.parseInt(operands[1].getValue()) + "";
+            return operands[0].getValue().subtract(operands[1].getValue());
         }
 
         return null;
