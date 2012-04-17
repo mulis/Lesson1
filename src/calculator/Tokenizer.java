@@ -1,9 +1,10 @@
 package calculator;
 
-import token.NumberToken;
-import token.OperatorToken;
-import token.Token;
+import token.IToken;
+import token.TokenFactory;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,42 +18,57 @@ public class Tokenizer {
 
     private final String expression;
     private int expressionPosition;
-
-    //private final Matcher digitsMatcher = Pattern.compile("\\G\\d+").matcher("");
-    private final Matcher digitsMatcher = Pattern.compile("\\G\\d*\\.?\\d+").matcher("");
-    private final Matcher operatorsMatcher = Pattern.compile("\\G[\\+?\\-?]").matcher("");
-    private final Matcher parenthesesMatcher = Pattern.compile("\\G[\\(?\\)?]").matcher("");
+    private Map<IToken.Type, Matcher> matchers;
 
     public Tokenizer(String expression) {
         this.expression = expression;
-        expressionPosition = 0;
-        digitsMatcher.reset(expression);
-        operatorsMatcher.reset(expression);
-        parenthesesMatcher.reset(expression);
-        skipSpaces();
+        initMatchers();
+        reset(expression);
     }
 
-    public Token nextToken() {
+    private void initMatchers() {
 
-        if (digitsMatcher.find(expressionPosition)) {
-            expressionPosition = digitsMatcher.end();
-            skipSpaces();
-            return new NumberToken(expression, digitsMatcher.start(), digitsMatcher.end(), digitsMatcher.group());
+        matchers = new EnumMap<IToken.Type, Matcher>(IToken.Type.class);
+        matchers.put(IToken.Type.NUMBER, Pattern.compile("\\G\\d*\\.?\\d+").matcher(""));
+        matchers.put(IToken.Type.OPERATOR, Pattern.compile("\\G[\\+?\\-?]").matcher(""));
+        matchers.put(IToken.Type.PARENTHESIS_LEFT, Pattern.compile("\\G[\\(?]").matcher(""));
+        matchers.put(IToken.Type.PARENTHESIS_RIGHT, Pattern.compile("\\G[\\)?]").matcher(""));
+        matchers.put(IToken.Type.UNKNOWN, Pattern.compile("\\G[\\.?]").matcher(""));
+
+    }
+
+    public void reset(String expression) {
+
+        for (IToken.Type type : IToken.Type.values()) {
+            matchers.get(type).reset(expression);
+        }
+        expressionPosition = 0;
+        skipSpaces();
+
+    }
+
+    public IToken nextToken() {
+
+        IToken.Type nextTokenType = IToken.Type.UNKNOWN;
+        int nextTokenStart = expressionPosition;
+        int nextTokenEnd = expression.length();
+
+        for (IToken.Type type : IToken.Type.values()) {
+
+            Matcher matcher = matchers.get(type);
+
+            if (matcher.find(expressionPosition)) {
+                nextTokenType = type;
+                nextTokenStart = matcher.start();
+                nextTokenEnd = matcher.end();
+                expressionPosition = matcher.end();
+                skipSpaces();
+                break;
+            }
+
         }
 
-        if (operatorsMatcher.find(expressionPosition)) {
-            expressionPosition = operatorsMatcher.end();
-            skipSpaces();
-            return new OperatorToken(expression, operatorsMatcher.start(), operatorsMatcher.end());
-        }
-
-        if (parenthesesMatcher.find(expressionPosition)) {
-            expressionPosition = parenthesesMatcher.end();
-            skipSpaces();
-            return new Token(Token.TYPE_PARENTHESIS, expression, parenthesesMatcher.start(), parenthesesMatcher.end());
-        }
-
-        return new Token(Token.TYPE_UNKNOWN, expression, expressionPosition, expression.length());
+        return TokenFactory.makeToken(nextTokenType, expression, nextTokenStart, nextTokenEnd);
 
     }
 
@@ -62,7 +78,7 @@ public class Tokenizer {
 
     void skipSpaces() {
 
-        while (hasNext() && (expression.charAt(expressionPosition) == Token.SPACE)) {
+        while (hasNext() && (expression.charAt(expressionPosition) == ' ')) {
             expressionPosition++;
         }
 

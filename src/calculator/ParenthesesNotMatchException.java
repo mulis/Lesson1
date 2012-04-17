@@ -1,6 +1,6 @@
 package calculator;
 
-import token.Token;
+import token.IToken;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +9,7 @@ import token.Token;
  * Time: 14:59
  */
 public class ParenthesesNotMatchException extends CalculationException {
-    ParenthesesNotMatchException(Token token) {
+    ParenthesesNotMatchException(IToken token) {
         super("Parentheses did not match.", token);
     }
 }

@@ -6,24 +6,15 @@ package token;
  * Date: 29.02.12
  * Time: 22:35
  */
-public class Token {
+public class Token implements IToken {
 
-    public static final int TYPE_UNKNOWN = 0;
-    public static final int TYPE_NUMBER = 1;
-    public static final int TYPE_OPERATOR = 2;
-    public static final int TYPE_PARENTHESIS = 3;
-
-    public static final char SPACE = ' ';
-    public static final char PARENTHESIS_LEFT = '(';
-    public static final char PARENTHESIS_RIGHT = ')';
-
-    final int type;
+    final Type type;
     final String expression;
     final int start;
     final int end;
     final String text;
 
-    public Token(int type, String expression, int start, int end) {
+    public Token(Type type, String expression, int start, int end) {
         this.type = type;
         this.expression = expression;
         this.start = start;
@@ -31,22 +22,27 @@ public class Token {
         this.text = expression.substring(start, end);
     }
 
-    public int getType() {
+    @Override
+    public Type getType() {
         return type;
     }
 
+    @Override
     public int getStart() {
         return start;
     }
 
+    @Override
     public int getEnd() {
         return end;
     }
 
+    @Override
     public String getExpression() {
         return expression;
     }
 
+    @Override
     public String getText() {
         return text;
     }

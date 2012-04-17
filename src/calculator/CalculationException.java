@@ -1,6 +1,6 @@
 package calculator;
 
-import token.Token;
+import token.IToken;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,10 +10,10 @@ import token.Token;
  */
 public class CalculationException extends Exception {
 
-    final Token token;
+    final IToken token;
     final String message;
 
-    CalculationException(String message, Token token) {
+    CalculationException(String message, IToken token) {
         super();
         this.message = message;
         this.token = token;

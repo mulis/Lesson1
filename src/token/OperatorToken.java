@@ -8,10 +8,7 @@ import java.math.BigDecimal;
  * Date: 02.03.12
  * Time: 1:16
  */
-public class OperatorToken extends Token {
-
-    public static final char PLUS = '+';
-    public static final char MINUS = '-';
+public class OperatorToken extends Token implements IOperatorToken {
 
     // precedence   operators       associativity
     // 4            !               right to left
@@ -19,20 +16,18 @@ public class OperatorToken extends Token {
     // 2            + -             left to right
     // 1            =               right to left
 
-    public static final boolean LEFT_TO_RIGHT = true;
-    public static final boolean RIGHT_TO_LEFT = false;
-
     final int precedence;
     final boolean association;
     final int argumentCount;
 
     public OperatorToken(String expression, int start, int end) {
-        super(TYPE_OPERATOR, expression, start, end);
+        super(Type.OPERATOR, expression, start, end);
         this.precedence = getPrecedence();
         this.association = getAssociation();
         this.argumentCount = getArgumentCount();
     }
 
+    @Override
     public int getPrecedence() {
 
         if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
@@ -47,6 +42,7 @@ public class OperatorToken extends Token {
 
     }
 
+    @Override
     public boolean getAssociation() {
 
         if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
@@ -57,6 +53,7 @@ public class OperatorToken extends Token {
 
     }
 
+    @Override
     public int getArgumentCount() {
 
         if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
@@ -67,17 +64,33 @@ public class OperatorToken extends Token {
 
     }
 
-    public BigDecimal operate(NumberToken[] operands) {
+    @Override
+    public INumberToken operate(INumberToken[] operands) {
 
-        if (text.charAt(0) == OperatorToken.PLUS) {
-            return operands[0].getValue().add(operands[1].getValue());
+        int start = getStart();
+        int end = getEnd();
+
+        for (IToken operand : operands) {
+            if (start > operand.getStart()) {
+                start = operand.getStart();
+            }
+
+            if (end < operand.getEnd()) {
+                end = operand.getEnd();
+            }
         }
 
-        if (text.charAt(0) == OperatorToken.MINUS) {
-            return operands[0].getValue().subtract(operands[1].getValue());
+        BigDecimal result = null;
+
+        if (text.charAt(0) == IOperatorToken.PLUS) {
+            result = operands[0].getValue().add(operands[1].getValue());
         }
 
-        return null;
+        if (text.charAt(0) == IOperatorToken.MINUS) {
+            result = operands[0].getValue().subtract(operands[1].getValue());
+        }
+
+        return new NumberToken(expression, start, end, result);
 
     }
 

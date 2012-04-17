@@ -1,8 +1,8 @@
 package calculator;
 
-import token.NumberToken;
-import token.OperatorToken;
-import token.Token;
+import token.INumberToken;
+import token.IOperatorToken;
+import token.IToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,18 +13,20 @@ import java.util.ArrayList;
  * Date: 29.02.12
  * Time: 22:05
  */
-public class Calculator {
+public class Calculator implements ICalculator {
 
     private boolean verbose = false;
 
-    public Calculator setVerbose(boolean verbose) {
+    @Override
+    public ICalculator setVerbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
+    @Override
     public BigDecimal calculate(String expression) throws CalculationException {
 
-        ArrayList<Token> tokens = makeTokens(expression);
+        ArrayList<IToken> tokens = makeTokens(expression);
 
         if (verbose) {
             System.out.println("Calculation");
@@ -35,14 +37,12 @@ public class Calculator {
 
         while (tokens.size() > 1) {
 
-            Token token = tokens.get(index);
+            IToken token = tokens.get(index);
 
-            if (token.getType() == Token.TYPE_OPERATOR) {
+            if (token.getType() == IToken.Type.OPERATOR) {
 
-                OperatorToken operator = (OperatorToken) token;
-                NumberToken[] operands = new NumberToken[operator.getArgumentCount()];
-                int start = operator.getStart();
-                int end = operator.getEnd();
+                IOperatorToken operator = (IOperatorToken) token;
+                INumberToken[] operands = new INumberToken[operator.getArgumentCount()];
 
                 index -= operator.getArgumentCount();
                 if (index < 0) {
@@ -51,20 +51,11 @@ public class Calculator {
 
                 for (int i = 0; i < operator.getArgumentCount(); i++) {
 
-                    Token operand = tokens.get(index);
+                    IToken operand = tokens.get(index);
 
-                    if (operand.getType() == Token.TYPE_NUMBER) {
+                    if (operand.getType() == IToken.Type.NUMBER) {
 
-                        operands[i] = (NumberToken) operand;
-
-                        if (start > operand.getStart()) {
-                            start = operand.getStart();
-                        }
-
-                        if (end < operand.getEnd()) {
-                            end = operand.getEnd();
-                        }
-
+                        operands[i] = (INumberToken) operand;
                         tokens.remove(operand);
 
                     } else {
@@ -73,9 +64,9 @@ public class Calculator {
 
                 }
 
-                BigDecimal operationResult = operator.operate(operands);
+                INumberToken result = operator.operate(operands);
 
-                tokens.add(index, new NumberToken(expression, start, end, operationResult));
+                tokens.add(index, result);
                 tokens.remove(operator);
 
                 if (verbose) {
@@ -92,20 +83,20 @@ public class Calculator {
 
         }
 
-        return ((NumberToken) tokens.get(0)).getValue();
+        return ((INumberToken) tokens.get(0)).getValue();
 
     }
 
-    private void printTokens(ArrayList<Token> tokens) {
+    private void printTokens(ArrayList<IToken> tokens) {
 
         String tokensText = "";
 
-        for (Token token : tokens) {
+        for (IToken token : tokens) {
 
             tokensText += " ";
 
-            if (token.getType() == Token.TYPE_NUMBER) {
-                tokensText += ((NumberToken) token).getValue();
+            if (token.getType() == IToken.Type.NUMBER) {
+                tokensText += ((INumberToken) token).getValue();
                 continue;
             }
 
@@ -117,12 +108,12 @@ public class Calculator {
 
     }
 
-    ArrayList<Token> makeTokens(String expression) throws CalculationException {
+    private ArrayList<IToken> makeTokens(String expression) throws CalculationException {
 
         // making tokens in RPN
         Tokenizer tokenizer = new Tokenizer(expression);
-        ArrayList<Token> tokens = new ArrayList<Token>();
-        ArrayList<Token> tokenStack = new ArrayList<Token>();
+        ArrayList<IToken> tokens = new ArrayList<IToken>();
+        ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
         if (verbose) {
             System.out.println("Tokenizing");
@@ -131,13 +122,13 @@ public class Calculator {
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
-            Token token = tokenizer.nextToken();
+            IToken token = tokenizer.nextToken();
             if (verbose) {
                 System.out.println("token:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
             }
 
             // If the token is a number (identifier), then add it to the output queue.
-            if (token.getType() == Token.TYPE_NUMBER) {
+            if (token.getType() == IToken.Type.NUMBER) {
                 tokens.add(token);
                 continue;
             }
@@ -149,20 +140,20 @@ public class Calculator {
             // TODO
 
             // If the token is an operator, op1, then:
-            if (token.getType() == Token.TYPE_OPERATOR) {
+            if (token.getType() == IToken.Type.OPERATOR) {
 
                 while (tokenStack.size() > 0) {
 
-                    Token tokenStackItem = tokenStack.get(tokenStack.size() - 1);
+                    IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
                     // While there is an operator token, o2, at the top of the stack
                     // op1 is left-associative and its precedence is less than or equal to that of op2,
                     // or op1 is right-associative and its precedence is less than that of op2,
-                    if (tokenStackItem.getType() == Token.TYPE_OPERATOR) {
-                        OperatorToken operator1 = (OperatorToken) token;
-                        OperatorToken operator2 = (OperatorToken) tokenStackItem;
-                        if (((operator1.getAssociation() == OperatorToken.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
-                                || ((operator1.getAssociation() == OperatorToken.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
+                    if (tokenStackItem.getType() == IToken.Type.OPERATOR) {
+                        IOperatorToken operator1 = (IOperatorToken) token;
+                        IOperatorToken operator2 = (IOperatorToken) tokenStackItem;
+                        if (((operator1.getAssociation() == IOperatorToken.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
+                                || ((operator1.getAssociation() == IOperatorToken.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
                             // Pop o2 off the stack, onto the output queue;
                             tokenStack.remove(tokenStackItem);
                             tokens.add(tokenStackItem);
@@ -179,53 +170,49 @@ public class Calculator {
 
             }
 
-            if (token.getType() == Token.TYPE_PARENTHESIS) {
+            // If the token is a left parenthesis, then push it onto the stack.
+            if (token.getType() == IToken.Type.PARENTHESIS_LEFT) {
+                tokenStack.add(token);
+                continue;
+            }
 
-                // If the token is a left parenthesis, then push it onto the stack.
-                if (token.getText().charAt(0) == Token.PARENTHESIS_LEFT) {
-                    tokenStack.add(token);
-                    continue;
-                }
+            // If the token is a right parenthesis:
+            if (token.getType() == IToken.Type.PARENTHESIS_RIGHT) {
 
-                // If the token is a right parenthesis:
-                if (token.getText().charAt(0) == Token.PARENTHESIS_RIGHT) {
+                boolean parenthesesMatch = false;
 
-                    boolean parenthesesMatch = false;
+                // Until the token at the top of the stack is a left parenthesis,
+                // pop operators off the stack onto the output queue
+                while (tokenStack.size() > 0) {
 
-                    // Until the token at the top of the stack is a left parenthesis,
-                    // pop operators off the stack onto the output queue
-                    while (tokenStack.size() > 0) {
+                    IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
-                        Token tokenStackItem = tokenStack.get(tokenStack.size() - 1);
-
-                        if (tokenStackItem.getText().charAt(0) == Token.PARENTHESIS_LEFT) {
-                            parenthesesMatch = true;
-                            break;
-                        } else {
-                            tokenStack.remove(tokenStackItem);
-                            tokens.add(tokenStackItem);
-                        }
-
+                    if (tokenStackItem.getType() == IToken.Type.PARENTHESIS_LEFT) {
+                        parenthesesMatch = true;
+                        break;
+                    } else {
+                        tokenStack.remove(tokenStackItem);
+                        tokens.add(tokenStackItem);
                     }
 
-                    // If the stack runs out without finding a left parenthesis, then there are mismatched parentheses.
-                    if (!parenthesesMatch) {
-                        throw (new ParenthesesNotMatchException(token));
-                    }
-
-                    // Pop the left parenthesis from the stack, but not onto the output queue.
-                    tokenStack.remove(tokenStack.size() - 1);
-
-                    // If the token at the top of the stack is a function token, pop it onto the output queue.
-                    // TODO
-
-                    continue;
-
                 }
+
+                // If the stack runs out without finding a left parenthesis, then there are mismatched parentheses.
+                if (!parenthesesMatch) {
+                    throw (new ParenthesesNotMatchException(token));
+                }
+
+                // Pop the left parenthesis from the stack, but not onto the output queue.
+                tokenStack.remove(tokenStack.size() - 1);
+
+                // If the token at the top of the stack is a function token, pop it onto the output queue.
+                // TODO
+
+                continue;
 
             }
 
-            if (token.getType() == Token.TYPE_UNKNOWN) {
+            if (token.getType() == IToken.Type.UNKNOWN) {
                 throw (new UnknownTokenException(token));
             }
 
@@ -235,9 +222,9 @@ public class Calculator {
         // While there are still operator tokens in the stack:
         while (tokenStack.size() > 0) {
 
-            Token tokenStackItem = tokenStack.get(tokenStack.size() - 1);
+            IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
-            if (tokenStackItem.getType() == Token.TYPE_PARENTHESIS) {
+            if ((tokenStackItem.getType() == IToken.Type.PARENTHESIS_LEFT) || (tokenStackItem.getType() == IToken.Type.PARENTHESIS_RIGHT)) {
                 throw (new ParenthesesNotMatchException(tokenStackItem));
             }
 

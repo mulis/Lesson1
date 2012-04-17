@@ -1,6 +1,6 @@
 package calculator;
 
-import token.Token;
+import token.IToken;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +9,7 @@ import token.Token;
  * Time: 15:00
  */
 public class UnknownTokenException extends CalculationException {
-    UnknownTokenException(Token token) {
+    UnknownTokenException(IToken token) {
         super("Unknown token.", token);
     }
 }
