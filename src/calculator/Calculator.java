@@ -30,7 +30,7 @@ public class Calculator implements ICalculator {
 
         if (verbose) {
             System.out.println("Calculation");
-            printTokens(tokens);
+            System.out.println(dumpTokens(tokens));
         }
 
         int index = 0;
@@ -70,7 +70,7 @@ public class Calculator implements ICalculator {
                 tokens.remove(operator);
 
                 if (verbose) {
-                    printTokens(tokens);
+                    System.out.println(dumpTokens(tokens));
                 }
 
             }
@@ -87,7 +87,7 @@ public class Calculator implements ICalculator {
 
     }
 
-    private void printTokens(ArrayList<IToken> tokens) {
+    private String dumpTokens(ArrayList<IToken> tokens) {
 
         String tokensText = "";
 
@@ -104,7 +104,7 @@ public class Calculator implements ICalculator {
 
         }
 
-        System.out.println(tokensText);
+        return tokensText;
 
     }
 

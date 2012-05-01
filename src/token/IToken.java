@@ -10,14 +10,14 @@ public interface IToken {
 
     enum Type {NUMBER, OPERATOR, PARENTHESIS_LEFT, PARENTHESIS_RIGHT, UNKNOWN}
 
-    Type getType();
+    public Type getType();
 
-    int getStart();
+    public int getStart();
 
-    int getEnd();
+    public int getEnd();
 
-    String getExpression();
+    public String getExpression();
 
-    String getText();
+    public String getText();
 
 }
