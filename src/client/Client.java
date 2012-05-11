@@ -19,13 +19,13 @@ public class Client {
         try {
 
             Calculator calculator = new Calculator();
-            Logger loger = Logger.getLogger("");
+            Logger logger = Logger.getLogger("");
 
             // setup calculator class logger
             if (args.length > 0 && args[0].equals("-v")) {
-                loger.setLevel(Level.ALL);
+                logger.setLevel(Level.ALL);
             } else {
-                loger.setLevel(Level.OFF);
+                logger.setLevel(Level.OFF);
             }
 
             if ((args.length == 0) || (args.length == 1 && args[0].equals("-h"))) {
