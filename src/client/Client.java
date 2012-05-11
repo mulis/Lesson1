@@ -19,7 +19,7 @@ public class Client {
         try {
 
             Calculator calculator = new Calculator();
-            Logger logger = Logger.getLogger("");
+            Logger logger = Logger.getLogger("calculator");
 
             // setup calculator class logger
             if (args.length > 0 && args[0].equals("-v")) {
@@ -54,8 +54,7 @@ public class Client {
                             continue;
                         }
                         try {
-                            String result = calculator.calculate(expression).toString();
-                            System.out.println(result);
+                            System.out.println("= " + calculator.calculate(expression));
                         } catch (Exception ex) {
                             System.err.println(ex + "\n");
                         }
@@ -65,12 +64,12 @@ public class Client {
             // verbose calculation
             else if (args.length > 1 && args[0].equals("-v")) {
                 System.out.println(args[1]);
-                System.out.println("= " + new Calculator().calculate(args[1]));
+                System.out.println("= " + calculator.calculate(args[1]));
             }
             // calculation
             else {
                 System.out.println(args[0]);
-                System.out.println("= " + new Calculator().calculate(args[0]));
+                System.out.println("= " + calculator.calculate(args[0]));
             }
             System.exit(0);
         } catch (Exception ex) {
