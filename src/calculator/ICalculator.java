@@ -10,8 +10,6 @@ import java.math.BigDecimal;
  */
 public interface ICalculator {
 
-    ICalculator setVerbose(boolean verbose);
-
     BigDecimal calculate(String expression) throws CalculationException;
 
 }

@@ -3,6 +3,8 @@ package client;
 import calculator.Calculator;
 
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,8 +17,20 @@ public class Client {
     public static void main(String[] args) {
 
         try {
-            if (args.length == 0 || args[0].startsWith("-h")) {
-                System.out.println("Arguments: [ [-v] \"expression\" | -i ] | -h");
+
+            Calculator calculator = new Calculator();
+            Logger loger = Logger.getLogger("");
+
+            // setup calculator class logger
+            if (args.length > 0 && args[0].equals("-v")) {
+                loger.setLevel(Level.ALL);
+            } else {
+                loger.setLevel(Level.OFF);
+            }
+
+            if ((args.length == 0) || (args.length == 1 && args[0].equals("-h"))) {
+                System.out.println("Calculation program.");
+                System.out.println("Arguments: [ [-v] \"expression\" |  -i ] | -h");
                 System.out.println("\t\"expression\" : calculate expression");
                 System.out.println("\t-v : calculate expression verbose");
                 System.out.println("\t-i : run in interactive mode");
@@ -25,13 +39,9 @@ public class Client {
                 System.out.println("\taddition : +");
                 System.out.println("\tsubtraction : -");
                 System.out.println("\tparentheses : ()");
-                System.exit(0);
             }
-            boolean verbose = false;
-            if (args.length > 0 && args[0].startsWith("-v")) {
-                verbose = true;
-            }
-            if ((args.length > 0 && args[0].startsWith("-i")) || (args.length > 1 && args[0].startsWith("-v") && args[1].startsWith("-i"))) {
+            // interactive calculation or verbose interactive calculation
+            else if ((args.length == 1 && args[0].equals("-i")) || (args.length == 2 && args[0].equals("-v") && args[1].equals("-i"))) {
                 System.out.println("Interactive mode.\nInput expression and press enter key.\nTo exit input dot symbol and press enter key\n");
                 Scanner in = new Scanner(System.in);
                 while (true) {
@@ -44,26 +54,27 @@ public class Client {
                             continue;
                         }
                         try {
-                            System.out.println("= " + new Calculator().setVerbose(verbose).calculate(expression) + "\n");
+                            String result = calculator.calculate(expression).toString();
+                            System.out.println(result);
                         } catch (Exception ex) {
-                            System.out.println(ex + "\n");
+                            System.err.println(ex + "\n");
                         }
                     }
                 }
-                System.exit(0);
             }
-            if (args.length > 1 && args[0].startsWith("-v")) {
+            // verbose calculation
+            else if (args.length > 1 && args[0].equals("-v")) {
                 System.out.println(args[1]);
-                System.out.println("= " + new Calculator().setVerbose(true).calculate(args[1]));
-                System.exit(0);
+                System.out.println("= " + new Calculator().calculate(args[1]));
             }
-            if (args.length > 0) {
+            // calculation
+            else {
                 System.out.println(args[0]);
                 System.out.println("= " + new Calculator().calculate(args[0]));
-                System.exit(0);
             }
+            System.exit(0);
         } catch (Exception ex) {
-            System.out.println(ex + "\n");
+            System.err.println(ex + "\n");
         }
 
     }

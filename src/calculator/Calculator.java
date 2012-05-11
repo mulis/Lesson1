@@ -6,6 +6,7 @@ import token.IToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,81 +16,105 @@ import java.util.ArrayList;
  */
 public class Calculator implements ICalculator {
 
-    private boolean verbose = false;
+    Logger logger = Logger.getLogger("calculator");
+//    StringBuffer log = new StringBuffer();
 
-    @Override
-    public ICalculator setVerbose(boolean verbose) {
-        this.verbose = verbose;
-        return this;
-    }
+//    public StringBuffer getLog() {
+//        return log;
+//    }
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {
 
-        ArrayList<IToken> tokens = makeTokens(expression);
+        ArrayList<IToken> tokens;
 
-        if (verbose) {
-            System.out.println("Calculation");
-            System.out.println(dumpTokens(tokens));
-        }
+        try {
 
-        int index = 0;
+            logger.info("Expression:");
+            logger.info("\t" + expression);
+//            log.setLength(0);
+//            log.append("Expression:\n");
+//            log.append("\t" + expression + "\n");
 
-        while (tokens.size() > 1) {
+            tokens = makeTokens(expression);
 
-            IToken token = tokens.get(index);
+            logger.info("Calculation:");
+            logger.info(dumpTokens(tokens));
+//            log.append("Calculation:\n");
+//            log.append(dumpTokens(tokens) + "\n");
 
-            if (token.getType() == IToken.Type.OPERATOR) {
+            int index = 0;
 
-                IOperatorToken operator = (IOperatorToken) token;
-                INumberToken[] operands = new INumberToken[operator.getArgumentCount()];
+            while (tokens.size() > 1) {
 
-                index -= operator.getArgumentCount();
-                if (index < 0) {
-                    throw (new AbsentOperandException(operator));
-                }
+                IToken token = tokens.get(index);
 
-                for (int i = 0; i < operator.getArgumentCount(); i++) {
+                if (token.getType() == IToken.Type.OPERATOR) {
 
-                    IToken operand = tokens.get(index);
+                    IOperatorToken operator = (IOperatorToken) token;
+                    INumberToken[] operands = new INumberToken[operator.getArgumentCount()];
 
-                    if (operand.getType() == IToken.Type.NUMBER) {
-
-                        operands[i] = (INumberToken) operand;
-                        tokens.remove(operand);
-
-                    } else {
+                    index -= operator.getArgumentCount();
+                    if (index < 0) {
                         throw (new AbsentOperandException(operator));
                     }
 
+                    for (int i = 0; i < operator.getArgumentCount(); i++) {
+
+                        IToken operand = tokens.get(index);
+
+                        if (operand.getType() == IToken.Type.NUMBER) {
+
+                            operands[i] = (INumberToken) operand;
+                            tokens.remove(operand);
+
+                        } else {
+                            throw (new AbsentOperandException(operator));
+                        }
+
+                    }
+
+                    INumberToken result = operator.operate(operands);
+
+                    tokens.add(index, result);
+                    tokens.remove(operator);
+
+                    logger.info(dumpTokens(tokens));
+//                    log.append(dumpTokens(tokens) + "\n");
+
                 }
 
-                INumberToken result = operator.operate(operands);
+                index++;
 
-                tokens.add(index, result);
-                tokens.remove(operator);
-
-                if (verbose) {
-                    System.out.println(dumpTokens(tokens));
+                if ((index == tokens.size()) && (tokens.size() > 1)) {
+                    throw (new AbsentOperatorException(tokens.get(index - 1)));
                 }
 
             }
 
-            index++;
-
-            if ((index == tokens.size()) && (tokens.size() > 1)) {
-                throw (new AbsentOperatorException(tokens.get(index - 1)));
-            }
-
+        } catch (CalculationException ex) {
+//            logger.info(log.toString());
+            logger.severe(ex.toString());
+            throw (ex);
         }
 
-        return ((INumberToken) tokens.get(0)).getValue();
+        BigDecimal result = ((INumberToken) tokens.get(0)).getValue();
+
+        logger.info("Result:");
+        logger.info("\t" + result.toString());
+
+//        logger.info(log.toString());
+
+//        log.append("Result:\n");
+//        log.append("\t" + result.toString() + "\n");
+
+        return result;
 
     }
 
     private String dumpTokens(ArrayList<IToken> tokens) {
 
-        String tokensText = "";
+        String tokensText = "\t";
 
         for (IToken token : tokens) {
 
@@ -115,17 +140,15 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokens = new ArrayList<IToken>();
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
-        if (verbose) {
-            System.out.println("Tokenizing");
-        }
+        logger.info("Tokenizing:");
+//        log.append("Tokenizing:\n");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
-            if (verbose) {
-                System.out.println("token:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
-            }
+            logger.info("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
+//            log.append("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd() + "\n");
 
             // If the token is a number (identifier), then add it to the output queue.
             if (token.getType() == IToken.Type.NUMBER) {
