@@ -4,9 +4,11 @@ import token.INumberToken;
 import token.IOperatorToken;
 import token.IToken;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,12 +18,33 @@ import java.util.logging.Logger;
  */
 public class Calculator implements ICalculator {
 
-    Logger logger = Logger.getLogger("calculator");
-//    StringBuffer log = new StringBuffer();
+    Logger logger;
 
-//    public StringBuffer getLog() {
-//        return log;
-//    }
+    public Calculator() {
+        //setupLoggerFromFile();
+        logger = Logger.getLogger(Calculator.class.getName());
+        setupLoggerFromAPI();
+    }
+
+    private void setupLoggerFromAPI() {
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setFormatter(new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                return record.getMessage() + "\n";
+            }
+        });
+        logger.addHandler(consoleHandler);
+        //logger.setUseParentHandlers(false);
+    }
+
+    private void setupLoggerFromFile() {
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("jul.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {
@@ -32,16 +55,11 @@ public class Calculator implements ICalculator {
 
             logger.info("Expression:");
             logger.info("\t" + expression);
-//            log.setLength(0);
-//            log.append("Expression:\n");
-//            log.append("\t" + expression + "\n");
 
             tokens = makeTokens(expression);
 
             logger.info("Calculation:");
             logger.info(dumpTokens(tokens));
-//            log.append("Calculation:\n");
-//            log.append(dumpTokens(tokens) + "\n");
 
             int index = 0;
 
@@ -80,7 +98,6 @@ public class Calculator implements ICalculator {
                     tokens.remove(operator);
 
                     logger.info(dumpTokens(tokens));
-//                    log.append(dumpTokens(tokens) + "\n");
 
                 }
 
@@ -93,7 +110,6 @@ public class Calculator implements ICalculator {
             }
 
         } catch (CalculationException ex) {
-//            logger.info(log.toString());
             logger.severe(ex.toString());
             throw (ex);
         }
@@ -102,11 +118,6 @@ public class Calculator implements ICalculator {
 
         logger.info("Result:");
         logger.info("\t" + result.toString());
-
-//        logger.info(log.toString());
-
-//        log.append("Result:\n");
-//        log.append("\t" + result.toString() + "\n");
 
         return result;
 
@@ -141,14 +152,12 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
         logger.info("Tokenizing:");
-//        log.append("Tokenizing:\n");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
             logger.info("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
-//            log.append("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd() + "\n");
 
             // If the token is a number (identifier), then add it to the output queue.
             if (token.getType() == IToken.Type.NUMBER) {
