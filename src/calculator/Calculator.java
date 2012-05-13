@@ -4,11 +4,9 @@ import token.INumberToken;
 import token.IOperatorToken;
 import token.IToken;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,33 +16,7 @@ import java.util.logging.*;
  */
 public class Calculator implements ICalculator {
 
-    Logger logger;
-
-    public Calculator() {
-        //setupLoggerFromFile();
-        logger = Logger.getLogger(Calculator.class.getName());
-        setupLoggerFromAPI();
-    }
-
-    private void setupLoggerFromAPI() {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                return record.getMessage() + "\n";
-            }
-        });
-        logger.addHandler(consoleHandler);
-        //logger.setUseParentHandlers(false);
-    }
-
-    private void setupLoggerFromFile() {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("jul.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    Logger logger = Logger.getLogger(Calculator.class.getName());
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {

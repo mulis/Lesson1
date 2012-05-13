@@ -1,9 +1,13 @@
 package client;
 
 import calculator.Calculator;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,11 +29,26 @@ public class Client {
             Calculator calculator = new Calculator();
 
             // setup calculator class logger
-            org.slf4j.bridge.SLF4JBridgeHandler.install();
             java.util.logging.Logger calculatorLogger = java.util.logging.Logger.getLogger(Calculator.class.getName());
             if (args.length > 0 && args[0].equals("-v")) {
+
                 clientLogger.info("Set calculator logger level to java.util.logging.Level.ALL");
                 calculatorLogger.setLevel(java.util.logging.Level.ALL);
+
+                ConsoleHandler consoleHandler = new ConsoleHandler();
+                consoleHandler.setFormatter(new Formatter() {
+                    @Override
+                    public String format(LogRecord record) {
+                        return record.getMessage() + "\n";
+                    }
+                });
+                calculatorLogger.addHandler(consoleHandler);
+
+                SLF4JBridgeHandler bridgeHandler = new SLF4JBridgeHandler();
+                calculatorLogger.addHandler(bridgeHandler);
+
+                calculatorLogger.setUseParentHandlers(false);
+
             } else {
                 clientLogger.info("Set calculator logger level to java.util.logging.Level.OFF");
                 calculatorLogger.setLevel(java.util.logging.Level.OFF);
@@ -97,7 +116,6 @@ public class Client {
             System.err.println(ex + "\n");
         }
 
-        org.slf4j.bridge.SLF4JBridgeHandler.uninstall();
         clientLogger.info("Client stop");
         System.exit(0);
 
