@@ -16,7 +16,8 @@ import java.util.logging.Logger;
  */
 public class Calculator implements ICalculator {
 
-    Logger logger = Logger.getLogger(Calculator.class.getName());
+    private Logger logger = Logger.getLogger(Calculator.class.getName());
+    private StringBuffer loggerBuffer = new StringBuffer();
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {
@@ -25,13 +26,14 @@ public class Calculator implements ICalculator {
 
         try {
 
-            logger.info("Expression:");
-            logger.info("\t" + expression);
+            logger.info("Expression:\n\t" + expression);
 
             tokens = makeTokens(expression);
+            logger.info(loggerBuffer.toString());
 
-            logger.info("Calculation:");
-            logger.info(dumpTokens(tokens));
+            loggerBuffer.setLength(0);
+            loggerBuffer.append("Calculation:\n");
+            loggerBuffer.append(dumpTokens(tokens)).append("\n");
 
             int index = 0;
 
@@ -69,7 +71,7 @@ public class Calculator implements ICalculator {
                     tokens.add(index, result);
                     tokens.remove(operator);
 
-                    logger.info(dumpTokens(tokens));
+                    loggerBuffer.append(dumpTokens(tokens)).append("\n");
 
                 }
 
@@ -81,15 +83,17 @@ public class Calculator implements ICalculator {
 
             }
 
+            logger.info(loggerBuffer.toString());
+
         } catch (CalculationException ex) {
+            logger.info(loggerBuffer.toString());
             logger.severe(ex.toString());
             throw (ex);
         }
 
         BigDecimal result = ((INumberToken) tokens.get(0)).getValue();
 
-        logger.info("Result:");
-        logger.info("\t" + result.toString());
+        logger.info("Result:\n\t" + result.toString());
 
         return result;
 
@@ -123,13 +127,14 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokens = new ArrayList<IToken>();
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
-        logger.info("Tokenizing:");
+        loggerBuffer.setLength(0);
+        loggerBuffer.append("Tokenizing:\n");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
-            logger.info("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
+            loggerBuffer.append("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd() + "\n");
 
             // If the token is a number (identifier), then add it to the output queue.
             if (token.getType() == IToken.Type.NUMBER) {

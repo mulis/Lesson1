@@ -17,7 +17,7 @@ public class OperatorToken extends Token implements IOperatorToken {
     // 1            =               right to left
 
     final int precedence;
-    final boolean association;
+    final int association;
     final int argumentCount;
 
     public OperatorToken(String expression, int start, int end) {
@@ -43,7 +43,7 @@ public class OperatorToken extends Token implements IOperatorToken {
     }
 
     @Override
-    public boolean getAssociation() {
+    public int getAssociation() {
 
         if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
             return LEFT_TO_RIGHT;

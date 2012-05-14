@@ -10,12 +10,12 @@ public interface IOperatorToken extends IToken {
 
     char PLUS = '+';
     char MINUS = '-';
-    boolean LEFT_TO_RIGHT = true;
-    boolean RIGHT_TO_LEFT = false;
+    int LEFT_TO_RIGHT = 1;
+    int RIGHT_TO_LEFT = -1;
 
     int getPrecedence();
 
-    boolean getAssociation();
+    int getAssociation();
 
     int getArgumentCount();
 

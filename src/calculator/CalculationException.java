@@ -10,8 +10,8 @@ import token.IToken;
  */
 public class CalculationException extends Exception {
 
-    final IToken token;
-    final String message;
+    public final IToken token;
+    public final String message;
 
     CalculationException(String message, IToken token) {
         super();
