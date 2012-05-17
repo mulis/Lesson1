@@ -64,7 +64,7 @@ public class Client {
 
             calculator = new Calculator();
 
-            // setup calculator class logger
+            // setup calculator logger for redirecting messages to client logger
             calculatorLogger = java.util.logging.Logger.getLogger(Calculator.class.getName());
             calculatorLogger.addHandler(new SLF4JBridgeHandler());
             calculatorLogger.setUseParentHandlers(false);
@@ -73,7 +73,7 @@ public class Client {
 
                 clientLogger.debug("Client calculate to console");
 
-                // setup calculator logger
+                // setup calculator logger for output to console
                 calculatorLoggerHandler = new java.util.logging.ConsoleHandler();
                 calculatorLoggerHandler.setFormatter(new java.util.logging.Formatter() {
                     @Override
@@ -164,6 +164,7 @@ public class Client {
                 clientFrame.pack();
                 clientFrame.setVisible(true);
 
+                // setup calculator logger for output to ClientFrame.textArea
                 calculatorLoggerHandler = new java.util.logging.Handler() {
                     @Override
                     public void publish(java.util.logging.LogRecord record) {
