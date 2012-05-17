@@ -32,8 +32,8 @@ public class Calculator implements ICalculator {
             logger.info(loggerBuffer.toString());
 
             loggerBuffer.setLength(0);
-            loggerBuffer.append("Calculation:\n");
-            loggerBuffer.append(dumpTokens(tokens)).append("\n");
+            loggerBuffer.append("Calculation:");
+            loggerBuffer.append(dumpTokens(tokens));
 
             int index = 0;
 
@@ -71,7 +71,7 @@ public class Calculator implements ICalculator {
                     tokens.add(index, result);
                     tokens.remove(operator);
 
-                    loggerBuffer.append(dumpTokens(tokens)).append("\n");
+                    loggerBuffer.append(dumpTokens(tokens));
 
                 }
 
@@ -101,7 +101,7 @@ public class Calculator implements ICalculator {
 
     private String dumpTokens(ArrayList<IToken> tokens) {
 
-        String tokensText = "\t";
+        String tokensText = "\n\t";
 
         for (IToken token : tokens) {
 
@@ -128,13 +128,13 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
         loggerBuffer.setLength(0);
-        loggerBuffer.append("Tokenizing:\n");
+        loggerBuffer.append("Tokenizing:");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
-            loggerBuffer.append("\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd() + "\n");
+            loggerBuffer.append("\n\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
 
             // If the token is a number (identifier), then add it to the output queue.
             if (token.getType() == IToken.Type.NUMBER) {

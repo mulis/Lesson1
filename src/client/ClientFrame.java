@@ -1,6 +1,8 @@
 package client;
 
 import calculator.CalculationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -18,6 +20,8 @@ import java.awt.event.MouseEvent;
  */
 public class ClientFrame extends JFrame {
 
+    private Logger clientFrameLogger;
+
     static JTextField textField;
     static JTextArea textArea;
     static JButton buttonClear;
@@ -29,21 +33,23 @@ public class ClientFrame extends JFrame {
 
         super("Calculator");
 
+        clientFrameLogger = LoggerFactory.getLogger(ClientFrame.class.getName());
+
         textField = new JTextField();
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String text = textField.getText();
-                textArea.append(text + newline);
+                String expression = textField.getText();
+                textArea.append(expression + newline);
                 try {
-                    String result = Client.calculator.calculate(text).toString();
-                    // if calculation verbose then log messages must be in textArea now
-                    textArea.append("= " + result + newline);
-                } catch (Exception ex) {
-                    // if calculation verbose skip CalculationException message output to avoid duplication
+                    clientFrameLogger.debug("Calculate expression: " + expression);
+                    String result = Client.calculator.calculate(expression).toString();
                     if (!Client.isVerboseCalculation()) {
-                        textArea.append(ex + newline);
+                        textArea.append("= " + result + newline);
                     }
+                    clientFrameLogger.debug("Calculation result: " + result);
+                } catch (Exception ex) {
+                    clientFrameLogger.error(ex.toString());
                     if (CalculationException.class.isInstance(ex)) {
                         int position = ((CalculationException) ex).token.getStart();
                         textField.setCaretPosition(position);
@@ -62,6 +68,7 @@ public class ClientFrame extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 3) {
                     textArea.setText("");
+                    textField.grabFocus();
                 }
             }
         });
@@ -78,6 +85,7 @@ public class ClientFrame extends JFrame {
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clientFrameLogger.debug("Calculator output clear");
                 textArea.setText("");
                 textField.grabFocus();
             }
@@ -89,6 +97,7 @@ public class ClientFrame extends JFrame {
         buttonVerbose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clientFrameLogger.debug("Calculator verbose output change");
                 Client.setVerboseCalculation(buttonVerbose.isSelected());
                 textField.grabFocus();
             }
