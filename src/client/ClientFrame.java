@@ -106,6 +106,11 @@ public class ClientFrame extends JFrame {
 
         add(BorderLayout.PAGE_END, panel);
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(800, 600));
+        pack();
+        setVisible(true);
+
     }
 
 }

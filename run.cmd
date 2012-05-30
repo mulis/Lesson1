@@ -1,0 +1,1 @@
+java -jar -Dlog4j.configuration=file:log4j.xml Lesson1.jar 2+2 -v
