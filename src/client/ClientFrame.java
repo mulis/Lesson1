@@ -32,9 +32,29 @@ public class ClientFrame extends JFrame {
     ClientFrame() {
 
         super("Calculator");
-
         clientFrameLogger = LoggerFactory.getLogger(ClientFrame.class.getName());
+        initGUI();
 
+    }
+
+    private void initGUI() {
+
+        add(BorderLayout.PAGE_START, makeTextField());
+        add(BorderLayout.CENTER, new JScrollPane(makeTextArea()));
+
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(makeButtonClear());
+        panel.add(makeButtonVerbose());
+        add(BorderLayout.PAGE_END, panel);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(800, 600));
+        pack();
+        setVisible(true);
+
+    }
+
+    private JTextField makeTextField() {
         textField = new JTextField();
         textField.addActionListener(new ActionListener() {
             @Override
@@ -60,8 +80,10 @@ public class ClientFrame extends JFrame {
                 textArea.setCaretPosition(textArea.getDocument().getLength());
             }
         });
-        add(BorderLayout.PAGE_START, textField);
+        return textField;
+    }
 
+    private JTextArea makeTextArea() {
         textArea = new JTextArea();
         textArea.addMouseListener(new MouseInputAdapter() {
             @Override
@@ -73,13 +95,10 @@ public class ClientFrame extends JFrame {
             }
         });
         textArea.setEditable(false);
+        return textArea;
+    }
 
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        add(BorderLayout.CENTER, scrollPane);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-
+    private JButton makeButtonClear() {
         buttonClear = new JButton("Clear");
         buttonClear.setMnemonic(KeyEvent.VK_C);
         buttonClear.addActionListener(new ActionListener() {
@@ -90,27 +109,24 @@ public class ClientFrame extends JFrame {
                 textField.grabFocus();
             }
         });
-        panel.add(buttonClear);
+        return buttonClear;
+    }
 
+    private JToggleButton makeButtonVerbose() {
         buttonVerbose = new JToggleButton("Verbose");
         buttonVerbose.setMnemonic(KeyEvent.VK_V);
         buttonVerbose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clientFrameLogger.debug("Calculator verbose output change");
-                Client.setVerboseCalculation(buttonVerbose.isSelected());
+                Client.setCalculationVerbose(buttonVerbose.isSelected());
                 textField.grabFocus();
             }
         });
-        panel.add(buttonVerbose);
-
-        add(BorderLayout.PAGE_END, panel);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(800, 600));
-        pack();
-        setVisible(true);
-
+        return buttonVerbose;
     }
 
+    public void print(String msg) {
+        textArea.append(msg);
+    }
 }
