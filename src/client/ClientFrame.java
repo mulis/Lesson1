@@ -1,16 +1,14 @@
 package client;
 
 import calculator.CalculationException;
+import calculator.Calculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,12 +18,14 @@ import java.awt.event.MouseEvent;
  */
 public class ClientFrame extends JFrame {
 
-    private Logger logger;
+    static private Logger logger;
 
-    static JTextField textField;
-    static JTextArea textArea;
-    static JButton buttonClear;
-    static JToggleButton buttonVerbose;
+    static private Calculator calculator;
+
+    static private JTextField textField;
+    static private JTextArea textArea;
+    static private JButton buttonClear;
+    static private JToggleButton buttonVerbose;
 
     private final static String newline = System.getProperty("line.separator");
 
@@ -39,6 +39,8 @@ public class ClientFrame extends JFrame {
 
     private void initGUI() {
 
+        logger.debug("ClientFrame start");
+
         add(BorderLayout.PAGE_START, makeTextField());
         add(BorderLayout.CENTER, new JScrollPane(makeTextArea()));
 
@@ -48,9 +50,17 @@ public class ClientFrame extends JFrame {
         add(BorderLayout.PAGE_END, panel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                logger.debug("ClientFrame stop");
+            }
+        });
         setMinimumSize(new Dimension(800, 600));
         pack();
         setVisible(true);
+
+        calculator = new Calculator();
 
     }
 
@@ -63,17 +73,23 @@ public class ClientFrame extends JFrame {
                 textArea.append(expression + newline);
                 try {
                     logger.debug("Calculate expression: " + expression);
-                    String result = Client.calculator.calculate(expression).toString();
-                    //if (!Client.isVerboseCalculation()) {
-                    textArea.append("= " + result + newline);
-                    //}
+                    String result = calculator.calculate(expression).toString();
+                    if (buttonVerbose.isSelected()) {
+                        textArea.append(calculator.getProcessBuffer().toString() + newline);
+                        textArea.append("= " + result + newline);
+                    } else {
+                        textArea.append("= " + result + newline);
+                    }
                     logger.debug("Calculation result: " + result);
                 } catch (Exception ex) {
                     logger.error(ex.toString());
                     if (CalculationException.class.isInstance(ex)) {
                         int position = ((CalculationException) ex).token.getStart();
                         textField.setCaretPosition(position);
-                        textArea.append(ex.toString());
+                        if (buttonVerbose.isSelected()) {
+                            textArea.append(calculator.getProcessBuffer().toString() + newline);
+                        }
+                        textArea.append(ex.toString() + newline);
                     }
                 }
                 textArea.append(newline);
@@ -120,15 +136,11 @@ public class ClientFrame extends JFrame {
         buttonVerbose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                logger.debug("Calculator verbose output change");
-                //Client.setCalculationVerbose(buttonVerbose.isSelected());
+                logger.debug("Calculator verbose set to " + buttonVerbose.isSelected());
                 textField.grabFocus();
             }
         });
         return buttonVerbose;
     }
 
-    public void print(String msg) {
-        textArea.append(msg);
-    }
 }

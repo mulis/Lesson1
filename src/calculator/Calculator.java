@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Calculator implements ICalculator {
 
     private Logger logger = Logger.getLogger(Calculator.class.getName());
-    private StringBuffer loggerBuffer = new StringBuffer();
+    private StringBuffer operationalBuffer = new StringBuffer();
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {
@@ -28,12 +28,14 @@ public class Calculator implements ICalculator {
 
             logger.info("Expression:\n\t" + expression);
 
+            operationalBuffer.setLength(0);
+            operationalBuffer.append("Process calculation:");
             tokens = makeTokens(expression);
-            logger.fine(loggerBuffer.toString());
+            //logger.fine(operationalBuffer.toString());
 
-            loggerBuffer.setLength(0);
-            loggerBuffer.append("Calculation:");
-            loggerBuffer.append(dumpTokens(tokens));
+            //operationalBuffer.setLength(0);
+            operationalBuffer.append("\nCalculation:");
+            operationalBuffer.append(dumpTokens(tokens));
 
             int index = 0;
 
@@ -71,7 +73,7 @@ public class Calculator implements ICalculator {
                     tokens.add(index, result);
                     tokens.remove(operator);
 
-                    loggerBuffer.append(dumpTokens(tokens));
+                    operationalBuffer.append(dumpTokens(tokens));
 
                 }
 
@@ -83,10 +85,10 @@ public class Calculator implements ICalculator {
 
             }
 
-            logger.fine(loggerBuffer.toString());
+            logger.fine(operationalBuffer.toString());
 
         } catch (CalculationException ex) {
-            logger.fine(loggerBuffer.toString());
+            logger.fine(operationalBuffer.toString());
             logger.severe(ex.toString());
             throw (ex);
         }
@@ -99,20 +101,26 @@ public class Calculator implements ICalculator {
 
     }
 
-    private String dumpTokens(ArrayList<IToken> tokens) {
+    @Override
+    public StringBuffer getProcessBuffer() {
+        return operationalBuffer;
+    }
 
-        String tokensText = "\n\t";
+    private StringBuffer dumpTokens(ArrayList<IToken> tokens) {
+
+        StringBuffer tokensText = new StringBuffer();
+        tokensText.append("\n\t");
 
         for (IToken token : tokens) {
 
-            tokensText += " ";
+            tokensText.append(" ");
 
             if (token.getType() == IToken.Type.NUMBER) {
-                tokensText += ((INumberToken) token).getValue();
+                tokensText.append(((INumberToken) token).getValue());
                 continue;
             }
 
-            tokensText += token.getText();
+            tokensText.append(token.getText());
 
         }
 
@@ -127,14 +135,14 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokens = new ArrayList<IToken>();
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
-        loggerBuffer.setLength(0);
-        loggerBuffer.append("Tokenizing:");
+        //operationalBuffer.setLength(0);
+        operationalBuffer.append("\nTokenizing:");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
-            loggerBuffer.append("\n\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
+            operationalBuffer.append("\n\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
 
             // If the token is a number (identifier), then add it to the output queue.
             if (token.getType() == IToken.Type.NUMBER) {

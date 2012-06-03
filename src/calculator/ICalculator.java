@@ -12,4 +12,6 @@ public interface ICalculator {
 
     BigDecimal calculate(String expression) throws CalculationException;
 
+    StringBuffer getProcessBuffer();
+
 }
