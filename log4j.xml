@@ -10,7 +10,6 @@
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="INFO"/>
-            <param name="LevelMax" value="INFO"/>
             <param name="AcceptOnMatch" value="true"/>
         </filter>
     </appender>
@@ -22,7 +21,7 @@
         </layout>
     </appender>
 
-    <logger name="client">
+    <logger name="client.Client">
         <level value="ALL"/>
         <appender-ref ref="console"/>
     </logger>

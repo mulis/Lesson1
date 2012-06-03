@@ -29,7 +29,7 @@ public class Calculator implements ICalculator {
             logger.info("Expression:\n\t" + expression);
 
             tokens = makeTokens(expression);
-            logger.info(loggerBuffer.toString());
+            logger.fine(loggerBuffer.toString());
 
             loggerBuffer.setLength(0);
             loggerBuffer.append("Calculation:");
@@ -83,10 +83,10 @@ public class Calculator implements ICalculator {
 
             }
 
-            logger.info(loggerBuffer.toString());
+            logger.fine(loggerBuffer.toString());
 
         } catch (CalculationException ex) {
-            logger.info(loggerBuffer.toString());
+            logger.fine(loggerBuffer.toString());
             logger.severe(ex.toString());
             throw (ex);
         }

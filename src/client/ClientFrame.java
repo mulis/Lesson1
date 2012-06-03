@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
  */
 public class ClientFrame extends JFrame {
 
-    private Logger clientFrameLogger;
+    private Logger logger;
 
     static JTextField textField;
     static JTextArea textArea;
@@ -32,7 +32,7 @@ public class ClientFrame extends JFrame {
     ClientFrame() {
 
         super("Calculator");
-        clientFrameLogger = LoggerFactory.getLogger(ClientFrame.class.getName());
+        logger = LoggerFactory.getLogger(ClientFrame.class.getName());
         initGUI();
 
     }
@@ -62,17 +62,18 @@ public class ClientFrame extends JFrame {
                 String expression = textField.getText();
                 textArea.append(expression + newline);
                 try {
-                    clientFrameLogger.debug("Calculate expression: " + expression);
+                    logger.debug("Calculate expression: " + expression);
                     String result = Client.calculator.calculate(expression).toString();
-                    if (!Client.isVerboseCalculation()) {
-                        textArea.append("= " + result + newline);
-                    }
-                    clientFrameLogger.debug("Calculation result: " + result);
+                    //if (!Client.isVerboseCalculation()) {
+                    textArea.append("= " + result + newline);
+                    //}
+                    logger.debug("Calculation result: " + result);
                 } catch (Exception ex) {
-                    clientFrameLogger.error(ex.toString());
+                    logger.error(ex.toString());
                     if (CalculationException.class.isInstance(ex)) {
                         int position = ((CalculationException) ex).token.getStart();
                         textField.setCaretPosition(position);
+                        textArea.append(ex.toString());
                     }
                 }
                 textArea.append(newline);
@@ -95,6 +96,7 @@ public class ClientFrame extends JFrame {
             }
         });
         textArea.setEditable(false);
+        textArea.setTabSize(4);
         return textArea;
     }
 
@@ -104,7 +106,7 @@ public class ClientFrame extends JFrame {
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clientFrameLogger.debug("Calculator output clear");
+                logger.debug("Calculator output clear");
                 textArea.setText("");
                 textField.grabFocus();
             }
@@ -118,8 +120,8 @@ public class ClientFrame extends JFrame {
         buttonVerbose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clientFrameLogger.debug("Calculator verbose output change");
-                Client.setCalculationVerbose(buttonVerbose.isSelected());
+                logger.debug("Calculator verbose output change");
+                //Client.setCalculationVerbose(buttonVerbose.isSelected());
                 textField.grabFocus();
             }
         });
