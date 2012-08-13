@@ -87,7 +87,8 @@ public class Client {
                         "Valid expression operations:\n" +
                         "\taddition : +\n" +
                         "\tsubtraction : -\n" +
-                        "\tparentheses : ()\n"
+                        "\tparentheses : ()\n" +
+                        "Valid signed numbers must be enclosed in parentheses: (-2)\n"
         );
     }
 

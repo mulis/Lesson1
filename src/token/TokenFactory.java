@@ -10,6 +10,10 @@ public class TokenFactory {
 
     public static IToken makeToken(IToken.Type type, String expression, int start, int end) {
 
+        if (type == IToken.Type.SIGNED_NUMBER) {
+            return new NumberToken(expression, start + 1, end - 1);
+        }
+
         if (type == IToken.Type.NUMBER) {
             return new NumberToken(expression, start, end);
         }

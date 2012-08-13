@@ -19,10 +19,10 @@ public class CalculatorTest {
 
     @Test
     public void testSign() {
-        testCalculation(" +2 ", new BigDecimal(2));
-        testCalculation(" -2 ", new BigDecimal(-2));
-        testCalculation(" +2 - 2 ", new BigDecimal(0));
-        testCalculation(" -2 + 2 ", new BigDecimal(0));
+        testCalculation(" (+2) ", new BigDecimal(2));
+        testCalculation(" (-2) ", new BigDecimal(-2));
+        testCalculation(" (+2) - 2 ", new BigDecimal(0));
+        testCalculation(" (-2) + 2 ", new BigDecimal(0));
     }
 
     @Test
@@ -60,6 +60,7 @@ public class CalculatorTest {
     @Test
     public void testParenthesis() {
         testCalculation(" 2 - ( 0 - 2 ) ", new BigDecimal(4));
+        testCalculation(" 2 - ( (-2) ) ", new BigDecimal(4));
         testCalculation(" 2 - ( ( 1 - 1 ) - 2 ) ", new BigDecimal(4));
     }
 
@@ -69,10 +70,10 @@ public class CalculatorTest {
         testCalculation(" 2 2 ", AbsentOperatorException.class);
         testCalculation(" 2 + ", AbsentOperandException.class);
         testCalculation(" ( 2 + 2 ) ) ", ParenthesesNotMatchException.class);
-        testCalculation("1(-2)", AbsentOperatorException.class);
-        testCalculation(" 2*2 ", UnknownTokenException.class);
-        testCalculation(" 2/2 ", UnknownTokenException.class);
-        testCalculation(" 2^2 ", UnknownTokenException.class);
+        testCalculation("1 (-2) ", AbsentOperatorException.class);
+        testCalculation(" 2 * 2 ", UnknownTokenException.class);
+        testCalculation(" 2 / 2 ", UnknownTokenException.class);
+        testCalculation(" 2 ^ 2 ", UnknownTokenException.class);
     }
 
     public void testCalculation(String expression, BigDecimal expressionResult) {
@@ -85,13 +86,11 @@ public class CalculatorTest {
 
     public void testCalculation(String expression, BigDecimal resultExpected, Class exceptionClassExpected) {
         BigDecimal resultReceived = null;
-        Exception exceptionReceived = null;
         try {
             resultReceived = calculator.calculate(expression);
             String message = String.format("\n\tExpression: %s \n\tResult expected: %s \n\tResult received: %s \n\tException expected: %s", expression, resultExpected, resultReceived, exceptionClassExpected);
             Assert.assertTrue(message, resultReceived.compareTo(resultExpected) == 0);
-        } catch (Exception exception) {
-            exceptionReceived = exception;
+        } catch (Exception exceptionReceived) {
             String message = String.format("\n\tExpression: %s \n\tResult expected: %s \n\tResult received: %s \n\tException expected: %s \n\tException received: %s \n%s\n%s\n", expression, resultExpected, resultReceived, exceptionClassExpected, exceptionReceived.getClass(), exceptionReceived, calculator.getProcessBuffer().toString());
             Assert.assertTrue(message, exceptionReceived.getClass().equals(exceptionClassExpected));
         }

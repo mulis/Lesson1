@@ -31,9 +31,7 @@ public class Calculator implements ICalculator {
             operationalBuffer.setLength(0);
             operationalBuffer.append("Process calculation:");
             tokens = makeTokens(expression);
-            //logger.fine(operationalBuffer.toString());
 
-            //operationalBuffer.setLength(0);
             operationalBuffer.append("\nCalculation:");
             operationalBuffer.append(dumpTokens(tokens));
 
@@ -135,17 +133,16 @@ public class Calculator implements ICalculator {
         ArrayList<IToken> tokens = new ArrayList<IToken>();
         ArrayList<IToken> tokenStack = new ArrayList<IToken>();
 
-        //operationalBuffer.setLength(0);
         operationalBuffer.append("\nTokenizing:");
 
         while (tokenizer.hasNext()) {
 
             // read one token from the input stream
             IToken token = tokenizer.nextToken();
-            operationalBuffer.append("\n\ttoken:" + token.getText() + " start:" + token.getStart() + " end:" + token.getEnd());
+            operationalBuffer.append("\n\ttoken:").append(token.getText()).append(" start:").append(token.getStart()).append(" end:").append(token.getEnd());
 
             // If the token is a number (identifier), then add it to the output queue.
-            if (token.getType() == IToken.Type.NUMBER) {
+            if ((token.getType() == IToken.Type.NUMBER) || (token.getType() == IToken.Type.SIGNED_NUMBER)) {
                 tokens.add(token);
                 continue;
             }
