@@ -6,9 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,6 +30,8 @@ public class ClientFrame extends JFrame {
     static private JTextArea textArea;
     static private JButton buttonClear;
     static private JToggleButton buttonVerbose;
+    static private JSpinner spinner;
+    static private JComboBox comboBox;
 
     private final static String newline = System.getProperty("line.separator");
 
@@ -33,6 +39,7 @@ public class ClientFrame extends JFrame {
 
         super("Calculator");
         logger = LoggerFactory.getLogger(ClientFrame.class.getName());
+        calculator = new Calculator();
         initGUI();
 
     }
@@ -45,6 +52,10 @@ public class ClientFrame extends JFrame {
         add(BorderLayout.CENTER, new JScrollPane(makeTextArea()));
 
         JPanel panel = new JPanel(new FlowLayout());
+        panel.add(new JLabel("Precision:"));
+        panel.add(makeSpinnerPrecision());
+        panel.add(new JLabel("Rounding Mode:"));
+        panel.add(makeComboBoxRoundingMode());
         panel.add(makeButtonClear());
         panel.add(makeButtonVerbose());
         add(BorderLayout.PAGE_END, panel);
@@ -60,8 +71,6 @@ public class ClientFrame extends JFrame {
         pack();
         setVisible(true);
 
-        calculator = new Calculator();
-
     }
 
     private JTextField makeTextField() {
@@ -76,9 +85,9 @@ public class ClientFrame extends JFrame {
                     String result = calculator.calculate(expression).toString();
                     if (buttonVerbose.isSelected()) {
                         textArea.append(calculator.getProcessBuffer().toString() + newline);
-                        textArea.append("= " + result + newline);
+                        textArea.append("=" + newline + result + newline);
                     } else {
-                        textArea.append("= " + result + newline);
+                        textArea.append("=" + newline + result + newline);
                     }
                     logger.debug("Calculation result: " + result);
                 } catch (Exception ex) {
@@ -141,6 +150,38 @@ public class ClientFrame extends JFrame {
             }
         });
         return buttonVerbose;
+    }
+
+    private JSpinner makeSpinnerPrecision() {
+        spinner = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+        spinner.setValue(calculator.getMathContext().getPrecision());
+        spinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                logger.debug("Calculator precision set to " + spinner.getValue());
+                setCalculatorMathContext();
+                textField.grabFocus();
+            }
+        });
+        return spinner;
+    }
+
+    private JComboBox makeComboBoxRoundingMode() {
+        comboBox = new JComboBox(RoundingMode.values());
+        comboBox.setSelectedItem(calculator.getMathContext().getRoundingMode());
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logger.debug("Calculator roundingMode set to " + comboBox.getSelectedItem());
+                setCalculatorMathContext();
+                textField.grabFocus();
+            }
+        });
+        return comboBox;
+    }
+
+    private void setCalculatorMathContext() {
+        calculator.setMathContext(new MathContext((Integer) spinner.getValue(), (RoundingMode) comboBox.getSelectedItem()));
     }
 
 }

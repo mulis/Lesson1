@@ -13,12 +13,12 @@ public class NumberToken extends Token implements INumberToken {
     final BigDecimal value;
 
     public NumberToken(String expression, int start, int end) {
-        super(Type.NUMBER, expression, start, end);
+        super(TokenType.NUMBER, expression, start, end);
         this.value = new BigDecimal(this.text);
     }
 
     public NumberToken(String expression, int start, int end, BigDecimal value) {
-        super(Type.NUMBER, expression, start, end);
+        super(TokenType.NUMBER, expression, start, end);
         this.value = value;
     }
 

@@ -8,13 +8,13 @@ package token;
  */
 public class Token implements IToken {
 
-    final Type type;
+    final TokenType type;
     final String expression;
     final int start;
     final int end;
     final String text;
 
-    public Token(Type type, String expression, int start, int end) {
+    public Token(TokenType type, String expression, int start, int end) {
         this.type = type;
         this.expression = expression;
         this.start = start;
@@ -23,7 +23,7 @@ public class Token implements IToken {
     }
 
     @Override
-    public Type getType() {
+    public TokenType getType() {
         return type;
     }
 

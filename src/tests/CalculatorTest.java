@@ -49,7 +49,8 @@ public class CalculatorTest {
         testCalculation(" 2 / 2 ", new BigDecimal(1));
         testCalculation(" 2 / 0 ", CalculationException.class);
         testCalculation(" 2 / (4 - 2 - 2) ", CalculationException.class);
-        testCalculation(" 2 / 0.00000000000000000001 ", new BigDecimal("200000000000000000000"));
+        testCalculation(" 3 / 2 ", new BigDecimal("1.5"));
+        testCalculation(" 2 / 0.1 ", new BigDecimal("20"));
     }
 
     @Test
@@ -57,6 +58,26 @@ public class CalculatorTest {
         testCalculation(" 2 ^ 2 ", new BigDecimal(4));
         testCalculation(" 2 ^ 0 ", new BigDecimal(1));
         testCalculation(" 0 ^ 2 ", new BigDecimal(0));
+        testCalculation(" 9 ^ (1 / 2) ", new BigDecimal(3));
+        testCalculation(" 9 ^ (3 / 2) ", new BigDecimal(27));
+    }
+
+    @Test
+    public void testPrecision() {
+        // Precision controlled by field mathContext in Calculator class
+        // Default value of mathContext is MathContext.DECIMAL64, so default precision is 16 digits
+        testCalculation(" 1.2345678901234567890 ", new BigDecimal("1.234567890123457"));
+        testCalculation(" 12345678901234567890 ", new BigDecimal("12345678901234570000"));
+        testCalculation(" 2 / 3 ", new BigDecimal("0.6666666666666667"));
+        testCalculation(" 5 / 3 ", new BigDecimal("1.666666666666667"));
+    }
+
+    @Test
+    public void testFunctions() {
+        testCalculation(" sqr( 2 * 2 * 4) ", new BigDecimal(4));
+        testCalculation(" min( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(-2.2));
+        testCalculation(" max( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(2.2));
+        testCalculation(" sum( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(0));
     }
 
     @Test

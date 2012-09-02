@@ -1,5 +1,7 @@
 package token;
 
+import java.math.MathContext;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Mulishov Serhij
@@ -15,5 +17,7 @@ public interface IOperatorToken extends IToken {
     int getArgumentCount();
 
     INumberToken operate(INumberToken[] operands);
+
+    INumberToken operate(INumberToken[] operands, MathContext mathContext);
 
 }

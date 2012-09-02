@@ -1,6 +1,7 @@
 package token;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +14,7 @@ public class OperatorToken extends Token implements IOperatorToken {
     private final OperatorType operator;
 
     public OperatorToken(String expression, int start, int end) {
-        super(Type.OPERATOR, expression, start, end);
+        super(TokenType.OPERATOR, expression, start, end);
         operator = OperatorType.getOperator(text.charAt(0));
     }
 
@@ -41,6 +42,13 @@ public class OperatorToken extends Token implements IOperatorToken {
     @Override
     public INumberToken operate(INumberToken[] operands) {
 
+        return operate(operands, MathContext.UNLIMITED);
+
+    }
+
+    @Override
+    public INumberToken operate(INumberToken[] operands, MathContext mathContext) {
+
         int start = getStart();
         int end = getEnd();
 
@@ -56,24 +64,24 @@ public class OperatorToken extends Token implements IOperatorToken {
 
         BigDecimal result = null;
 
-        if (operator == OperatorType.PLUS) {
-            result = operands[0].getValue().add(operands[1].getValue());
+        if (operator == OperatorType.ADDITION) {
+            result = operands[0].getValue().add(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.MINUS) {
-            result = operands[0].getValue().subtract(operands[1].getValue());
+        if (operator == OperatorType.SUBTRACTION) {
+            result = operands[0].getValue().subtract(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.MULTIPLIER) {
-            result = operands[0].getValue().multiply(operands[1].getValue());
+        if (operator == OperatorType.MULTIPLICATION) {
+            result = operands[0].getValue().multiply(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.DIVIDER) {
-            result = operands[0].getValue().divide(operands[1].getValue());
+        if (operator == OperatorType.DIVISION) {
+            result = operands[0].getValue().divide(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.EXPONENT) {
-            result = operands[0].getValue().pow(operands[1].getValue().intValueExact());
+        if (operator == OperatorType.EXPONENTIATION) {
+            result = new BigDecimal(Math.pow(operands[0].getValue().doubleValue(), operands[1].getValue().doubleValue()), mathContext);
         }
 
         return new NumberToken(expression, start, end, result);

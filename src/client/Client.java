@@ -4,6 +4,7 @@ import calculator.Calculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -35,6 +36,7 @@ public class Client {
 
                 // discover keys
                 boolean console = true;
+                Integer precision = null;
                 boolean verbose = false;
                 boolean interactive = false;
                 boolean help = false;
@@ -42,6 +44,7 @@ public class Client {
 
                 for (String arg : args) {
                     if (arg.equalsIgnoreCase("-c")) console = true;
+                    else if (arg.toLowerCase().startsWith("-p:")) precision = Integer.decode(args[2].substring(3));
                     else if (arg.equalsIgnoreCase("-v")) verbose = true;
                     else if (arg.equalsIgnoreCase("-i")) interactive = true;
                     else if (arg.equalsIgnoreCase("-h")) help = true;
@@ -49,6 +52,7 @@ public class Client {
                 }
 
                 // process keys
+                if (precision != null) setPrecision(precision);
                 if (help) {
                     help();
                 } else if (interactive) {
@@ -72,15 +76,22 @@ public class Client {
 
     }
 
+    private static void setPrecision(Integer precision) {
+
+        calculator.setMathContext(new MathContext(precision));
+
+    }
+
     private static void help() {
         logger.debug("Print help");
         String name = Client.class.getName();
         logger.info(
                 "Calculation program.\n" +
-                        "Usage: " + name + " [[-c] [-v] \"expression\" | [-c] [-v] [-i] | -h]\n" +
+                        "Usage: " + name + " [[-c] [-p:number] [-v] \"expression\" | [-c] [-p:number] [-v] [-i] | -h]\n" +
                         "\t" + name + " : start gui\n" +
                         "\t\"expression\" : expression to calculate\n" +
                         "\t-c : calculate to console\n" +
+                        "\t-p:number : set precision to \"number\" digits \n" +
                         "\t-v : calculate verbosely\n" +
                         "\t-i : start console interactive mode\n" +
                         "\t-h : print help\n" +
@@ -132,7 +143,7 @@ public class Client {
             if (verbose) {
                 logger.info(calculator.getProcessBuffer().toString());
             }
-            logger.info("= " + result);
+            logger.info("=\n" + result);
             logger.debug("Calculation result: " + result);
         } catch (Exception ex) {
             if (verbose) {

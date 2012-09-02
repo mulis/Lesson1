@@ -14,11 +14,11 @@ public enum OperatorType {
     // + -             2            left to right
     // =               1            right to left
 
-    PLUS('+', 2, OperatorType.LEFT_TO_RIGHT, 2),
-    MINUS('-', 2, OperatorType.LEFT_TO_RIGHT, 2),
-    MULTIPLIER('*', 3, OperatorType.LEFT_TO_RIGHT, 2),
-    DIVIDER('/', 3, OperatorType.LEFT_TO_RIGHT, 2),
-    EXPONENT('^', 3, OperatorType.LEFT_TO_RIGHT, 2);
+    ADDITION('+', 2, OperatorType.LEFT_TO_RIGHT, 2),
+    SUBTRACTION('-', 2, OperatorType.LEFT_TO_RIGHT, 2),
+    MULTIPLICATION('*', 3, OperatorType.LEFT_TO_RIGHT, 2),
+    DIVISION('/', 3, OperatorType.LEFT_TO_RIGHT, 2),
+    EXPONENTIATION('^', 3, OperatorType.LEFT_TO_RIGHT, 2);
 
     public final static int LEFT_TO_RIGHT = 1;
     public final static int RIGHT_TO_LEFT = -1;
@@ -36,11 +36,11 @@ public enum OperatorType {
     }
 
     static OperatorType getOperator(char sign) {
-        if (sign == PLUS.sign) return PLUS;
-        if (sign == MINUS.sign) return MINUS;
-        if (sign == MULTIPLIER.sign) return MULTIPLIER;
-        if (sign == DIVIDER.sign) return DIVIDER;
-        if (sign == EXPONENT.sign) return EXPONENT;
+        if (sign == ADDITION.sign) return ADDITION;
+        if (sign == SUBTRACTION.sign) return SUBTRACTION;
+        if (sign == MULTIPLICATION.sign) return MULTIPLICATION;
+        if (sign == DIVISION.sign) return DIVISION;
+        if (sign == EXPONENTIATION.sign) return EXPONENTIATION;
         return null;
     }
 

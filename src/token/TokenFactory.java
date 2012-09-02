@@ -8,29 +8,29 @@ package token;
  */
 public class TokenFactory {
 
-    public static IToken makeToken(IToken.Type type, String expression, int start, int end) {
+    public static IToken makeToken(TokenType type, String expression, int start, int end) {
 
-        if (type == IToken.Type.SIGNED_NUMBER) {
+        if (type == TokenType.SIGNED_NUMBER) {
             return new NumberToken(expression, start + 1, end - 1);
         }
 
-        if (type == IToken.Type.NUMBER) {
+        if (type == TokenType.NUMBER) {
             return new NumberToken(expression, start, end);
         }
 
-        if (type == IToken.Type.OPERATOR) {
+        if (type == TokenType.OPERATOR) {
             return new OperatorToken(expression, start, end);
         }
 
-        if (type == IToken.Type.PARENTHESIS_LEFT) {
-            return new Token(IToken.Type.PARENTHESIS_LEFT, expression, start, end);
+        if (type == TokenType.PARENTHESIS_LEFT) {
+            return new Token(TokenType.PARENTHESIS_LEFT, expression, start, end);
         }
 
-        if (type == IToken.Type.PARENTHESIS_RIGHT) {
-            return new Token(IToken.Type.PARENTHESIS_RIGHT, expression, start, end);
+        if (type == TokenType.PARENTHESIS_RIGHT) {
+            return new Token(TokenType.PARENTHESIS_RIGHT, expression, start, end);
         }
 
-        return new Token(IToken.Type.UNKNOWN, expression, start, end);
+        return new Token(TokenType.UNKNOWN, expression, start, end);
 
     }
 

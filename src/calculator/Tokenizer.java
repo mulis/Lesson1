@@ -1,12 +1,10 @@
 package calculator;
 
+import token.TokenType;
 import token.IToken;
 import token.TokenFactory;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,30 +16,16 @@ public class Tokenizer {
 
     private final String expression;
     private int expressionPosition;
-    private Map<IToken.Type, Matcher> matchers;
 
     public Tokenizer(String expression) {
         this.expression = expression;
-        initMatchers();
         reset(expression);
-    }
-
-    private void initMatchers() {
-
-        matchers = new EnumMap<IToken.Type, Matcher>(IToken.Type.class);
-        matchers.put(IToken.Type.SIGNED_NUMBER, Pattern.compile("\\G\\([\\+\\-]\\d*\\.?\\d+\\)").matcher("")); // signed number must be enclosed in parentheses
-        matchers.put(IToken.Type.NUMBER, Pattern.compile("\\G\\d*\\.?\\d+").matcher(""));
-        matchers.put(IToken.Type.OPERATOR, Pattern.compile("\\G[\\+\\-\\*\\/\\^]").matcher(""));
-        matchers.put(IToken.Type.PARENTHESIS_LEFT, Pattern.compile("\\G\\(").matcher(""));
-        matchers.put(IToken.Type.PARENTHESIS_RIGHT, Pattern.compile("\\G\\)").matcher(""));
-        matchers.put(IToken.Type.UNKNOWN, Pattern.compile("\\G\\.+").matcher(""));
-
     }
 
     public void reset(String expression) {
 
-        for (IToken.Type type : IToken.Type.values()) {
-            matchers.get(type).reset(expression);
+        for (TokenType type : TokenType.values()) {
+            type.matcher.reset(expression);
         }
         expressionPosition = 0;
         skipSpaces();
@@ -50,13 +34,13 @@ public class Tokenizer {
 
     public IToken nextToken() {
 
-        IToken.Type nextTokenType = IToken.Type.UNKNOWN;
+        TokenType nextTokenType = TokenType.UNKNOWN;
         int nextTokenStart = expressionPosition;
         int nextTokenEnd = expression.length();
 
-        for (IToken.Type type : IToken.Type.values()) {
+        for (TokenType type : TokenType.values()) {
 
-            Matcher matcher = matchers.get(type);
+            Matcher matcher = type.matcher;
 
             if (matcher.find(expressionPosition)) {
                 nextTokenType = type;

@@ -8,9 +8,7 @@ package token;
  */
 public interface IToken {
 
-    enum Type {SIGNED_NUMBER, NUMBER, OPERATOR, PARENTHESIS_LEFT, PARENTHESIS_RIGHT, UNKNOWN}
-
-    public Type getType();
+    public TokenType getType();
 
     public int getStart();
 

@@ -1,6 +1,7 @@
 package calculator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,6 +10,10 @@ import java.math.BigDecimal;
  * Time: 17:56
  */
 public interface ICalculator {
+
+    void setMathContext(MathContext mathContext);
+
+    MathContext getMathContext();
 
     BigDecimal calculate(String expression) throws CalculationException;
 

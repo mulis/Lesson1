@@ -1,11 +1,9 @@
 package calculator;
 
-import token.INumberToken;
-import token.IOperatorToken;
-import token.IToken;
-import token.OperatorType;
+import token.*;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -17,8 +15,20 @@ import java.util.logging.Logger;
  */
 public class Calculator implements ICalculator {
 
+    MathContext mathContext = MathContext.DECIMAL64;
+
     private Logger logger = Logger.getLogger(Calculator.class.getName());
     private StringBuffer operationalBuffer = new StringBuffer();
+
+    @Override
+    public void setMathContext(MathContext mathContext) {
+        this.mathContext = mathContext;
+    }
+
+    @Override
+    public MathContext getMathContext() {
+        return mathContext;
+    }
 
     @Override
     public BigDecimal calculate(String expression) throws CalculationException {
@@ -42,7 +52,7 @@ public class Calculator implements ICalculator {
 
                 IToken token = tokens.get(index);
 
-                if (token.getType() == IToken.Type.OPERATOR) {
+                if (token.getType() == TokenType.OPERATOR) {
 
                     IOperatorToken operator = (IOperatorToken) token;
                     INumberToken[] operands = new INumberToken[operator.getArgumentCount()];
@@ -56,7 +66,7 @@ public class Calculator implements ICalculator {
 
                         IToken operand = tokens.get(index);
 
-                        if (operand.getType() == IToken.Type.NUMBER) {
+                        if (operand.getType() == TokenType.NUMBER) {
 
                             operands[i] = (INumberToken) operand;
                             tokens.remove(operand);
@@ -70,7 +80,7 @@ public class Calculator implements ICalculator {
                     INumberToken result;
 
                     try {
-                        result = operator.operate(operands);
+                        result = operator.operate(operands, mathContext);
                     } catch (Exception ex) {
                         throw (new CalculationException(ex.getMessage(), operator));
                     }
@@ -98,7 +108,7 @@ public class Calculator implements ICalculator {
             throw (ex);
         }
 
-        BigDecimal result = ((INumberToken) tokens.get(0)).getValue();
+        BigDecimal result = ((INumberToken) tokens.get(0)).getValue().add(BigDecimal.ZERO, mathContext);
 
         logger.info("Result:\n\t" + result.toString());
 
@@ -120,7 +130,7 @@ public class Calculator implements ICalculator {
 
             tokensText.append(" ");
 
-            if (token.getType() == IToken.Type.NUMBER) {
+            if (token.getType() == TokenType.NUMBER) {
                 tokensText.append(((INumberToken) token).getValue());
                 continue;
             }
@@ -149,7 +159,7 @@ public class Calculator implements ICalculator {
             operationalBuffer.append("\n\ttoken:").append(token.getText()).append(" start:").append(token.getStart()).append(" end:").append(token.getEnd());
 
             // If the token is a number (identifier), then add it to the output queue.
-            if ((token.getType() == IToken.Type.NUMBER) || (token.getType() == IToken.Type.SIGNED_NUMBER)) {
+            if ((token.getType() == TokenType.NUMBER) || (token.getType() == TokenType.SIGNED_NUMBER)) {
                 tokens.add(token);
                 continue;
             }
@@ -161,7 +171,7 @@ public class Calculator implements ICalculator {
             // TODO
 
             // If the token is an operator, op1, then:
-            if (token.getType() == IToken.Type.OPERATOR) {
+            if (token.getType() == TokenType.OPERATOR) {
 
                 while (tokenStack.size() > 0) {
 
@@ -170,7 +180,7 @@ public class Calculator implements ICalculator {
                     // While there is an operator token, o2, at the top of the stack
                     // op1 is left-associative and its precedence is less than or equal to that of op2,
                     // or op1 is right-associative and its precedence is less than that of op2,
-                    if (tokenStackItem.getType() == IToken.Type.OPERATOR) {
+                    if (tokenStackItem.getType() == TokenType.OPERATOR) {
                         IOperatorToken operator1 = (IOperatorToken) token;
                         IOperatorToken operator2 = (IOperatorToken) tokenStackItem;
                         if (((operator1.getAssociation() == OperatorType.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
@@ -192,13 +202,13 @@ public class Calculator implements ICalculator {
             }
 
             // If the token is a left parenthesis, then push it onto the stack.
-            if (token.getType() == IToken.Type.PARENTHESIS_LEFT) {
+            if (token.getType() == TokenType.PARENTHESIS_LEFT) {
                 tokenStack.add(token);
                 continue;
             }
 
             // If the token is a right parenthesis:
-            if (token.getType() == IToken.Type.PARENTHESIS_RIGHT) {
+            if (token.getType() == TokenType.PARENTHESIS_RIGHT) {
 
                 boolean parenthesesMatch = false;
 
@@ -208,7 +218,7 @@ public class Calculator implements ICalculator {
 
                     IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
-                    if (tokenStackItem.getType() == IToken.Type.PARENTHESIS_LEFT) {
+                    if (tokenStackItem.getType() == TokenType.PARENTHESIS_LEFT) {
                         parenthesesMatch = true;
                         break;
                     } else {
@@ -233,7 +243,7 @@ public class Calculator implements ICalculator {
 
             }
 
-            if (token.getType() == IToken.Type.UNKNOWN) {
+            if (token.getType() == TokenType.UNKNOWN) {
                 throw (new UnknownTokenException(token));
             }
 
@@ -245,7 +255,7 @@ public class Calculator implements ICalculator {
 
             IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
 
-            if ((tokenStackItem.getType() == IToken.Type.PARENTHESIS_LEFT) || (tokenStackItem.getType() == IToken.Type.PARENTHESIS_RIGHT)) {
+            if ((tokenStackItem.getType() == TokenType.PARENTHESIS_LEFT) || (tokenStackItem.getType() == TokenType.PARENTHESIS_RIGHT)) {
                 throw (new ParenthesesNotMatchException(tokenStackItem));
             }
 
