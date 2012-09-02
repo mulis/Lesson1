@@ -183,8 +183,8 @@ public class Calculator implements ICalculator {
                     if (tokenStackItem.getType() == TokenType.OPERATOR) {
                         IOperatorToken operator1 = (IOperatorToken) token;
                         IOperatorToken operator2 = (IOperatorToken) tokenStackItem;
-                        if (((operator1.getAssociation() == OperatorType.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
-                                || ((operator1.getAssociation() == OperatorType.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
+                        if (((operator1.getAssociation() == AssociativityType.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
+                                || ((operator1.getAssociation() == AssociativityType.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
                             // Pop o2 off the stack, onto the output queue;
                             tokenStack.remove(tokenStackItem);
                             tokens.add(tokenStackItem);

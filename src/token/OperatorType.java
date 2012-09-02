@@ -14,14 +14,11 @@ public enum OperatorType {
     // + -             2            left to right
     // =               1            right to left
 
-    ADDITION('+', 2, OperatorType.LEFT_TO_RIGHT, 2),
-    SUBTRACTION('-', 2, OperatorType.LEFT_TO_RIGHT, 2),
-    MULTIPLICATION('*', 3, OperatorType.LEFT_TO_RIGHT, 2),
-    DIVISION('/', 3, OperatorType.LEFT_TO_RIGHT, 2),
-    EXPONENTIATION('^', 3, OperatorType.LEFT_TO_RIGHT, 2);
-
-    public final static int LEFT_TO_RIGHT = 1;
-    public final static int RIGHT_TO_LEFT = -1;
+    ADDITION('+', 2, AssociativityType.LEFT_TO_RIGHT, 2),
+    SUBTRACTION('-', 2, AssociativityType.LEFT_TO_RIGHT, 2),
+    MULTIPLICATION('*', 3, AssociativityType.LEFT_TO_RIGHT, 2),
+    DIVISION('/', 3, AssociativityType.LEFT_TO_RIGHT, 2),
+    EXPONENTIATION('^', 3, AssociativityType.LEFT_TO_RIGHT, 2);
 
     public final char sign;
     public final int precedence;
@@ -35,7 +32,7 @@ public enum OperatorType {
         this.argumentCount = argumentCount;
     }
 
-    static OperatorType getOperator(char sign) {
+    static OperatorType getOperatorType(char sign) {
         if (sign == ADDITION.sign) return ADDITION;
         if (sign == SUBTRACTION.sign) return SUBTRACTION;
         if (sign == MULTIPLICATION.sign) return MULTIPLICATION;

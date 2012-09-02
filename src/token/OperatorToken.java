@@ -11,31 +11,31 @@ import java.math.MathContext;
  */
 public class OperatorToken extends Token implements IOperatorToken {
 
-    private final OperatorType operator;
+    private final OperatorType operatorType;
 
     public OperatorToken(String expression, int start, int end) {
         super(TokenType.OPERATOR, expression, start, end);
-        operator = OperatorType.getOperator(text.charAt(0));
+        operatorType = OperatorType.getOperatorType(text.charAt(0));
     }
 
     @Override
     public int getPrecedence() {
 
-        return operator.precedence;
+        return operatorType.precedence;
 
     }
 
     @Override
     public int getAssociation() {
 
-        return operator.associativity;
+        return operatorType.associativity;
 
     }
 
     @Override
     public int getArgumentCount() {
 
-        return operator.argumentCount;
+        return operatorType.argumentCount;
 
     }
 
@@ -64,23 +64,23 @@ public class OperatorToken extends Token implements IOperatorToken {
 
         BigDecimal result = null;
 
-        if (operator == OperatorType.ADDITION) {
+        if (operatorType == OperatorType.ADDITION) {
             result = operands[0].getValue().add(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.SUBTRACTION) {
+        if (operatorType == OperatorType.SUBTRACTION) {
             result = operands[0].getValue().subtract(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.MULTIPLICATION) {
+        if (operatorType == OperatorType.MULTIPLICATION) {
             result = operands[0].getValue().multiply(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.DIVISION) {
+        if (operatorType == OperatorType.DIVISION) {
             result = operands[0].getValue().divide(operands[1].getValue(), mathContext);
         }
 
-        if (operator == OperatorType.EXPONENTIATION) {
+        if (operatorType == OperatorType.EXPONENTIATION) {
             result = new BigDecimal(Math.pow(operands[0].getValue().doubleValue(), operands[1].getValue().doubleValue()), mathContext);
         }
 
