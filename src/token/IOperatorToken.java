@@ -8,11 +8,6 @@ package token;
  */
 public interface IOperatorToken extends IToken {
 
-    char PLUS = '+';
-    char MINUS = '-';
-    int LEFT_TO_RIGHT = 1;
-    int RIGHT_TO_LEFT = -1;
-
     int getPrecedence();
 
     int getAssociation();

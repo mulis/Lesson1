@@ -3,6 +3,7 @@ package calculator;
 import token.INumberToken;
 import token.IOperatorToken;
 import token.IToken;
+import token.OperatorType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,7 +67,13 @@ public class Calculator implements ICalculator {
 
                     }
 
-                    INumberToken result = operator.operate(operands);
+                    INumberToken result;
+
+                    try {
+                        result = operator.operate(operands);
+                    } catch (Exception ex) {
+                        throw (new CalculationException(ex.getMessage(), operator));
+                    }
 
                     tokens.add(index, result);
                     tokens.remove(operator);
@@ -166,8 +173,8 @@ public class Calculator implements ICalculator {
                     if (tokenStackItem.getType() == IToken.Type.OPERATOR) {
                         IOperatorToken operator1 = (IOperatorToken) token;
                         IOperatorToken operator2 = (IOperatorToken) tokenStackItem;
-                        if (((operator1.getAssociation() == IOperatorToken.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
-                                || ((operator1.getAssociation() == IOperatorToken.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
+                        if (((operator1.getAssociation() == OperatorType.LEFT_TO_RIGHT) && (operator1.getPrecedence() <= operator2.getPrecedence()))
+                                || ((operator1.getAssociation() == OperatorType.RIGHT_TO_LEFT) && (operator1.getPrecedence() < operator2.getPrecedence()))) {
                             // Pop o2 off the stack, onto the output queue;
                             tokenStack.remove(tokenStackItem);
                             tokens.add(tokenStackItem);

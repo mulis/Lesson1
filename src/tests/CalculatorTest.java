@@ -40,16 +40,23 @@ public class CalculatorTest {
     @Test
     public void testMultiply() {
         testCalculation(" 2 * 2 ", new BigDecimal(4));
+        testCalculation(" 2 * 0 ", new BigDecimal(0));
+        testCalculation(" 2 * 0.00000000000000000001 ", new BigDecimal("0.00000000000000000002"));
     }
 
     @Test
     public void testDivide() {
         testCalculation(" 2 / 2 ", new BigDecimal(1));
+        testCalculation(" 2 / 0 ", CalculationException.class);
+        testCalculation(" 2 / (4 - 2 - 2) ", CalculationException.class);
+        testCalculation(" 2 / 0.00000000000000000001 ", new BigDecimal("200000000000000000000"));
     }
 
     @Test
     public void testPower() {
         testCalculation(" 2 ^ 2 ", new BigDecimal(4));
+        testCalculation(" 2 ^ 0 ", new BigDecimal(1));
+        testCalculation(" 0 ^ 2 ", new BigDecimal(0));
     }
 
     @Test
@@ -71,9 +78,6 @@ public class CalculatorTest {
         testCalculation(" 2 + ", AbsentOperandException.class);
         testCalculation(" ( 2 + 2 ) ) ", ParenthesesNotMatchException.class);
         testCalculation("1 (-2) ", AbsentOperatorException.class);
-        testCalculation(" 2 * 2 ", UnknownTokenException.class);
-        testCalculation(" 2 / 2 ", UnknownTokenException.class);
-        testCalculation(" 2 ^ 2 ", UnknownTokenException.class);
     }
 
     public void testCalculation(String expression, BigDecimal expressionResult) {

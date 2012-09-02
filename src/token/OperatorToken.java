@@ -10,57 +10,31 @@ import java.math.BigDecimal;
  */
 public class OperatorToken extends Token implements IOperatorToken {
 
-    // precedence   operators       associativity
-    // 4            !               right to left
-    // 3            * / %           left to right
-    // 2            + -             left to right
-    // 1            =               right to left
-
-    final int precedence;
-    final int association;
-    final int argumentCount;
+    private final OperatorType operator;
 
     public OperatorToken(String expression, int start, int end) {
         super(Type.OPERATOR, expression, start, end);
-        this.precedence = getPrecedence();
-        this.association = getAssociation();
-        this.argumentCount = getArgumentCount();
+        operator = OperatorType.getOperator(text.charAt(0));
     }
 
     @Override
     public int getPrecedence() {
 
-        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
-            return 2;
-        }
-
-//        if (text.charAt(0) == Token.MULTIPLIER && text.charAt(0) == Token.DIVIDER) {
-//            return 3;
-//        }
-
-        return 0;
+        return operator.precedence;
 
     }
 
     @Override
     public int getAssociation() {
 
-        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
-            return LEFT_TO_RIGHT;
-        }
-
-        return LEFT_TO_RIGHT;
+        return operator.associativity;
 
     }
 
     @Override
     public int getArgumentCount() {
 
-        if (text.charAt(0) == PLUS && text.charAt(0) == MINUS) {
-            return 2;
-        }
-
-        return 2;
+        return operator.argumentCount;
 
     }
 
@@ -82,12 +56,24 @@ public class OperatorToken extends Token implements IOperatorToken {
 
         BigDecimal result = null;
 
-        if (text.charAt(0) == IOperatorToken.PLUS) {
+        if (operator == OperatorType.PLUS) {
             result = operands[0].getValue().add(operands[1].getValue());
         }
 
-        if (text.charAt(0) == IOperatorToken.MINUS) {
+        if (operator == OperatorType.MINUS) {
             result = operands[0].getValue().subtract(operands[1].getValue());
+        }
+
+        if (operator == OperatorType.MULTIPLIER) {
+            result = operands[0].getValue().multiply(operands[1].getValue());
+        }
+
+        if (operator == OperatorType.DIVIDER) {
+            result = operands[0].getValue().divide(operands[1].getValue());
+        }
+
+        if (operator == OperatorType.EXPONENT) {
+            result = operands[0].getValue().pow(operands[1].getValue().intValueExact());
         }
 
         return new NumberToken(expression, start, end, result);

@@ -31,7 +31,7 @@ public class Tokenizer {
         matchers = new EnumMap<IToken.Type, Matcher>(IToken.Type.class);
         matchers.put(IToken.Type.SIGNED_NUMBER, Pattern.compile("\\G\\([\\+\\-]\\d*\\.?\\d+\\)").matcher("")); // signed number must be enclosed in parentheses
         matchers.put(IToken.Type.NUMBER, Pattern.compile("\\G\\d*\\.?\\d+").matcher(""));
-        matchers.put(IToken.Type.OPERATOR, Pattern.compile("\\G[\\+\\-]").matcher(""));
+        matchers.put(IToken.Type.OPERATOR, Pattern.compile("\\G[\\+\\-\\*\\/\\^]").matcher(""));
         matchers.put(IToken.Type.PARENTHESIS_LEFT, Pattern.compile("\\G\\(").matcher(""));
         matchers.put(IToken.Type.PARENTHESIS_RIGHT, Pattern.compile("\\G\\)").matcher(""));
         matchers.put(IToken.Type.UNKNOWN, Pattern.compile("\\G\\.+").matcher(""));

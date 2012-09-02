@@ -9,5 +9,7 @@ import java.math.BigDecimal;
  * Time: 11:57
  */
 public interface INumberToken extends IToken {
+
     BigDecimal getValue();
+
 }
