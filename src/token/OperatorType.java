@@ -1,8 +1,11 @@
 package token;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 /**
  * Created with IntelliJ IDEA.
- * User: rees
+ * User: Mulishov Serhij
  * Date: 02.09.12
  * Time: 1:02
  */
@@ -34,11 +37,37 @@ public enum OperatorType {
 
     static OperatorType getOperatorType(char sign) {
         if (sign == ADDITION.sign) return ADDITION;
-        if (sign == SUBTRACTION.sign) return SUBTRACTION;
-        if (sign == MULTIPLICATION.sign) return MULTIPLICATION;
-        if (sign == DIVISION.sign) return DIVISION;
-        if (sign == EXPONENTIATION.sign) return EXPONENTIATION;
+        else if (sign == SUBTRACTION.sign) return SUBTRACTION;
+        else if (sign == MULTIPLICATION.sign) return MULTIPLICATION;
+        else if (sign == DIVISION.sign) return DIVISION;
+        else if (sign == EXPONENTIATION.sign) return EXPONENTIATION;
         return null;
+    }
+
+    public BigDecimal operate(BigDecimal[] operands) {
+
+        return operate(operands, MathContext.UNLIMITED);
+
+    }
+
+    public BigDecimal operate(BigDecimal[] operands, MathContext mathContext) {
+
+        BigDecimal result = null;
+
+        if (sign == ADDITION.sign) {
+            result = operands[0].add(operands[1], mathContext);
+        } else if (sign == SUBTRACTION.sign) {
+            result = operands[0].subtract(operands[1], mathContext);
+        } else if (sign == MULTIPLICATION.sign) {
+            result = operands[0].multiply(operands[1], mathContext);
+        } else if (sign == DIVISION.sign) {
+            result = operands[0].divide(operands[1], mathContext);
+        } else if (sign == EXPONENTIATION.sign) {
+            result = new BigDecimal(Math.pow(operands[0].doubleValue(), operands[1].doubleValue()), mathContext);
+        }
+
+        return result;
+
     }
 
 }

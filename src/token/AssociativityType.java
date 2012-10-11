@@ -2,7 +2,7 @@ package token;
 
 /**
  * Created with IntelliJ IDEA.
- * User: rees
+ * User: Mulishov Serhij
  * Date: 03.09.12
  * Time: 1:51
  */

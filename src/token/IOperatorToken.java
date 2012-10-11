@@ -16,8 +16,8 @@ public interface IOperatorToken extends IToken {
 
     int getArgumentCount();
 
-    INumberToken operate(INumberToken[] operands);
+    INumberToken operate(INumberToken[] operandTokens);
 
-    INumberToken operate(INumberToken[] operands, MathContext mathContext);
+    INumberToken operate(INumberToken[] operandTokens, MathContext mathContext);
 
 }

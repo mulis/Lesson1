@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
- * User: rees
+ * User: Mulishov Serhij
  * Date: 12.08.12
  * Time: 15:15
  */
@@ -75,9 +75,13 @@ public class CalculatorTest {
     @Test
     public void testFunctions() {
         testCalculation(" sqr( 2 * 2 * 4) ", new BigDecimal(4));
-        testCalculation(" min( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(-2.2));
-        testCalculation(" max( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(2.2));
-        testCalculation(" sum( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal(0));
+        testCalculation(" 2 + sqr( 2 * 2 * 4) - 2 ", new BigDecimal(4));
+        testCalculation(" 2 + min( (-2), 0, 2, (-2.2), 2.2 ) - 2", new BigDecimal("-2.2"));
+        testCalculation(" min( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal("-2.2"));
+        testCalculation(" max( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal("2.2"));
+        testCalculation(" sum( (-2), 0, 2, (-2.2), 2.2 ) ", new BigDecimal("0"));
+        testCalculation(" sqr( min(9,10) )  ", new BigDecimal("3"));
+        testCalculation(" 2+ sum( sqr(0.25), 1, min((-3),3,0,1), (-1), max((-3),3,0), 1 ) - 2 ", new BigDecimal("1.5"));
     }
 
     @Test

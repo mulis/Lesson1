@@ -22,6 +22,14 @@ public class TokenFactory {
             return new OperatorToken(expression, start, end);
         }
 
+        if (type == TokenType.FUNCTION) {
+            return new FunctionToken(expression, start, end);
+        }
+
+        if (type == TokenType.FUNCTION_ARGUMENT_SEPARATOR) {
+            return new Token(TokenType.FUNCTION_ARGUMENT_SEPARATOR, expression, start, end);
+        }
+
         if (type == TokenType.PARENTHESIS_LEFT) {
             return new Token(TokenType.PARENTHESIS_LEFT, expression, start, end);
         }

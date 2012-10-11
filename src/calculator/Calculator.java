@@ -92,6 +92,46 @@ public class Calculator implements ICalculator {
 
                 }
 
+                if (token.getType() == TokenType.FUNCTION) {
+
+                    IFunctionToken function = (IFunctionToken) token;
+                    INumberToken[] arguments = new INumberToken[function.getArgumentCount()];
+
+                    index -= function.getArgumentCount();
+                    if (index < 0) {
+                        throw (new AbsentArgumentException(function));
+                    }
+
+                    for (int i = 0; i < function.getArgumentCount(); i++) {
+
+                        IToken argument = tokens.get(index);
+
+                        if (argument.getType() == TokenType.NUMBER) {
+
+                            arguments[i] = (INumberToken) argument;
+                            tokens.remove(argument);
+
+                        } else {
+                            throw (new AbsentArgumentException(function));
+                        }
+
+                    }
+
+                    INumberToken result;
+
+                    try {
+                        result = function.compute(arguments, mathContext);
+                    } catch (Exception ex) {
+                        throw (new CalculationException(ex.getMessage(), function));
+                    }
+
+                    tokens.add(index, result);
+                    tokens.remove(function);
+
+                    operationalBuffer.append(dumpTokens(tokens));
+
+                }
+
                 index++;
 
                 if ((index == tokens.size()) && (tokens.size() > 1)) {
@@ -165,13 +205,58 @@ public class Calculator implements ICalculator {
             }
 
             // If the token is a function token, then push it onto the stack.
-            // TODO
+            else if (token.getType() == TokenType.FUNCTION) {
+                tokenStack.add(token);
+                continue;
+            }
 
             // If the token is a function argument separator (e.g., a comma):
-            // TODO
+            else if (token.getType() == TokenType.FUNCTION_ARGUMENT_SEPARATOR) {
+
+                //tokenStack.add(token);
+
+                for (int i = tokenStack.size() - 1; i > -1; --i) {
+
+                    IToken tokenStackItem = tokenStack.get(i);
+
+                    if (tokenStackItem.getType() == TokenType.FUNCTION) {
+
+                        IFunctionToken function = (IFunctionToken) tokenStackItem;
+                        function.setArgumentCount(function.getArgumentCount() + 1);
+                        break;
+
+                    }
+
+                }
+
+                boolean parenthesesMatch = false;
+
+                while (tokenStack.size() > 0) {
+
+                    IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
+
+                    if (tokenStackItem.getType() == TokenType.PARENTHESIS_LEFT) {
+                        parenthesesMatch = true;
+                        break;
+                    } else {
+                        // Until the token at the top of the stack is a left parenthesis,
+                        // pop operators off the stack onto the output queue.
+                        tokenStack.remove(tokenStackItem);
+                        tokens.add(tokenStackItem);
+                    }
+
+                }
+
+                // If no left parentheses are encountered, either the separator was misplaced
+                // or parentheses were mismatched.
+                if (!parenthesesMatch) {
+                    throw (new ParenthesesNotMatchException(token));
+                }
+
+            }
 
             // If the token is an operator, op1, then:
-            if (token.getType() == TokenType.OPERATOR) {
+            else if (token.getType() == TokenType.OPERATOR) {
 
                 while (tokenStack.size() > 0) {
 
@@ -202,13 +287,13 @@ public class Calculator implements ICalculator {
             }
 
             // If the token is a left parenthesis, then push it onto the stack.
-            if (token.getType() == TokenType.PARENTHESIS_LEFT) {
+            else if (token.getType() == TokenType.PARENTHESIS_LEFT) {
                 tokenStack.add(token);
                 continue;
             }
 
             // If the token is a right parenthesis:
-            if (token.getType() == TokenType.PARENTHESIS_RIGHT) {
+            else if (token.getType() == TokenType.PARENTHESIS_RIGHT) {
 
                 boolean parenthesesMatch = false;
 
@@ -237,13 +322,20 @@ public class Calculator implements ICalculator {
                 tokenStack.remove(tokenStack.size() - 1);
 
                 // If the token at the top of the stack is a function token, pop it onto the output queue.
-                // TODO
+                if (tokenStack.size() > 0) {
+
+                    IToken tokenStackItem = tokenStack.get(tokenStack.size() - 1);
+
+                    if (tokenStackItem.getType() == TokenType.FUNCTION) {
+                        tokenStack.remove(tokenStackItem);
+                        tokens.add(tokenStackItem);
+                    }
+
+                }
 
                 continue;
 
-            }
-
-            if (token.getType() == TokenType.UNKNOWN) {
+            } else if (token.getType() == TokenType.UNKNOWN) {
                 throw (new UnknownTokenException(token));
             }
 
